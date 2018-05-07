@@ -8,6 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
+#define VEXT 1.0
 
 
 # ifndef NOPOISSONCREATE
@@ -146,7 +147,7 @@ void femPoissonSolve(femPoissonProblem *theProblem)
       }
       for (k = 0; k < nSpace; k++) {
         double numIntegrateB = phi[k] * J_e * weight * termIndep;
-        theSystem->B[map[k]] = theSystem->B[map[k]] + numIntegrateB;
+        theSystem->B[map[k]] = 0;//theSystem->B[map[k]] + numIntegrateB;
       }
     }
   }
@@ -160,10 +161,22 @@ void femPoissonSolve(femPoissonProblem *theProblem)
     */
     if (theEdges->edges[i].elem[1] == -1)
     {
+      double xe1 = theMesh->X[theEdges->edges[i].node[0]];
+      double ye1 = theMesh->Y[theEdges->edges[i].node[0]];
+      double xe2 = theMesh->X[theEdges->edges[i].node[1]];
+      double ye2 = theMesh->Y[theEdges->edges[i].node[1]];
+      double r1 = sqrt(xe1*xe1 + ye1*ye1);
+      double r2 = sqrt(xe2*xe2 + ye2*ye2);
+
       for (j = 0; j < 2; j++)
       {
         //(voir slide 14 CM4)
-        femFullSystemConstrain(theSystem,theEdges->edges[i].node[j],condHomo);
+        if(r1 > 0.5 && r2>0.5){
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[j],VEXT);
+        }
+        else{
+          femFullSystemConstrain(theSystem,theEdges->edges[i].node[j],0);
+        }
       }
     }
   }
