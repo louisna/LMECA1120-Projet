@@ -200,6 +200,10 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   //Resolution du systeme par elimination de Gauss
   femFullSystemEliminate(theSystem);
   femFullSystemEliminate(theSystem2);
+
+  for(i=0;i<theSystem->size;i++){
+    theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
+  }
 }
 
 # endif

@@ -53,7 +53,7 @@ int main(void)
         glfwGetFramebufferSize(window,&w,&h);
         glfemReshapeWindows(theProblem->mesh,w,h);
 
-        glfemPlotField(theProblem->mesh,theProblem->system2->B);
+        glfemPlotField(theProblem->mesh,theProblem->system->B);
         glColor3f(1.0,0.0,0.0); glfemDrawMessage(20,460,theMessage);
 
         for (i=0 ;i < theGrains->n; i++) {     
