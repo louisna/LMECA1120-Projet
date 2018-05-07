@@ -62,6 +62,8 @@ typedef struct {
 typedef struct {
     double *B;
     double **A;
+    double **A2;
+    double *B2;
     int size;
 } femFullSystem;
 
@@ -71,6 +73,7 @@ typedef struct {
     femDiscrete *space;
     femIntegration *rule;
     femFullSystem *system;
+    femFullSystem *system2;
 } femPoissonProblem;
 
 typedef struct {

@@ -8,7 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 1.0
+#define VEXT 10.0
 
 
 # ifndef NOPOISSONCREATE
@@ -25,6 +25,7 @@ femPoissonProblem *femPoissonCreate(const char *filename)
         theProblem->space = femDiscreteCreate(3,FEM_TRIANGLE);
         theProblem->rule = femIntegrationCreate(3,FEM_TRIANGLE); }
     theProblem->system = femFullSystemCreate(theProblem->mesh->nNode);
+    theProblem->system2 = femFullSystemCreate(theProblem->mesh->nNode);
     return theProblem;
 }
 
@@ -34,6 +35,7 @@ femPoissonProblem *femPoissonCreate(const char *filename)
 void femPoissonFree(femPoissonProblem *theProblem)
 {
     femFullSystemFree(theProblem->system);
+    femFullSystemFree(theProblem->system2);
     femIntegrationFree(theProblem->rule);
     femDiscreteFree(theProblem->space);
     femEdgesFree(theProblem->edges);
@@ -65,6 +67,9 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 
 void femPoissonSolve(femPoissonProblem *theProblem)
 {
+
+  int option = 1;
+
   //copie de la structure de theProblem
   femMesh *theMesh=theProblem->mesh;
   femEdges *theEdges=theProblem->edges;
@@ -72,6 +77,7 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   femIntegration *theRule=theProblem->rule;
   //allocation du systeme (voir slides)
   femFullSystem *theSystem=theProblem->system;
+  femFullSystem *theSystem2 = theProblem->system2;
   //terme independant eq Poisson
   double termIndep = 1.0;
   //conditions essentielles homogenes sur la frontiere
@@ -143,22 +149,21 @@ void femPoissonSolve(femPoissonProblem *theProblem)
         {
           double numIntegrateA = (dphidx[k] * dphidx[l] + dphidy[k] * dphidy[l]) * J_e * weight;
           theSystem->A[map[k]][map[l]] = theSystem->A[map[k]][map[l]] + numIntegrateA;
+          theSystem2->A[map[k]][map[l]] = theSystem2->A[map[k]][map[l]] + numIntegrateA;;
         }
       }
       for (k = 0; k < nSpace; k++) {
         double numIntegrateB = phi[k] * J_e * weight * termIndep;
         theSystem->B[map[k]] = 0;//theSystem->B[map[k]] + numIntegrateB;
+        theSystem2->B[map[k]] = 0;
       }
     }
   }
 
-  //on impose les contraintes sur certains segments
+  //on impose les contraintes sur certains segment
+  /*
   for (i=0; i < theEdges->nEdge; i++)
   {
-    /*
-    si le segment en question est sur le bord,
-      alors un de ses elements vaut -1
-    */
     if (theEdges->edges[i].elem[1] == -1)
     {
       double xe1 = theMesh->X[theEdges->edges[i].node[0]];
@@ -179,10 +184,26 @@ void femPoissonSolve(femPoissonProblem *theProblem)
         }
       }
     }
+    */
+  int done = 0;
+  for(i=0;i<theEdges->nEdge && !done;i++){
+    if(theEdges->edges[i].elem[1] == -1){
+      for(j=0;j<2;j++){
+        double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
+        double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;;
+        femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
+        femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);     
+      }
+    }
   }
 
   //Resolution du systeme par elimination de Gauss
   femFullSystemEliminate(theSystem);
+  femFullSystemEliminate(theSystem2);
+
+  for(i=0;i<theSystem->size;i++){
+    theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
+  }
 }
 
 # endif
