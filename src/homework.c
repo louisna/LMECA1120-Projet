@@ -62,6 +62,7 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 }
 
 # endif
+
 # ifndef NOPOISSONSOLVE
 
 
@@ -204,6 +205,57 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   for(i=0;i<theSystem->size;i++){
     theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
   }
+}
+
+# endif
+
+void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_return){
+  double x_iso, y_iso;
+  x_iso = -(x*y_loc[0] - x_loc[0]*y - x*y_loc[2] + x_loc[2]*y + x_loc[0]*y_loc[2] - x_loc[2]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
+  y_iso =  (x*y_loc[0] - x_loc[0]*y - x*y_loc[1] + x_loc[1]*y + x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
+
+  to_return[0] = x_iso;
+  to_return[1] = y_iso;
+}
+
+# ifndef FINDELEMENT
+
+void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
+  femMesh *theMesh = theProblem->mesh;
+  int n_g     = theGrains->n;
+  int *elem_g = theGrains->elem;
+  double *x_g    = theGrains->x;
+  double *y_g    = theGrains->y;
+
+  double *X_m    = theMesh->X;
+  double *Y_m    = theMesh->Y;
+  int *elem_m = theMesh->elem;
+  int n_e     = theMesh->nElem;
+
+  int i,j;
+  double x_elem[3];
+  double y_elem[3];
+  int map[4];
+  double iso[2];
+
+  for(i=0;i<n_g;i++){
+    double x_loc = x_g[i];
+    double y_loc = y_g[i];
+    int dedans = 0;
+
+    for(j=0;j<n_e && dedans == 0;j++){
+      femMeshLocal(theMesh, j, map, x_elem, y_elem);
+      isomorphisme(x_loc, y_loc, x_elem, y_elem, iso);
+
+      if(iso[0] <= 1 && iso[0] >= 0 && iso[1] <= 1 && iso[1] >= 0 && iso[1] + iso[0] <= 1){
+        dedans = 1;
+        elem_g[i] = j;
+      }
+
+    }
+
+  }
+
 }
 
 # endif
