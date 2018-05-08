@@ -62,8 +62,6 @@ typedef struct {
 typedef struct {
     double *B;
     double **A;
-    double **A2;
-    double *B2;
     int size;
 } femFullSystem;
 
@@ -90,6 +88,7 @@ typedef struct {
     double *m;
     double *dvBoundary;
     double *dvContacts;
+    int *elem; 
 } femGrains;
 
 

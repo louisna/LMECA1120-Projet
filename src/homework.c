@@ -190,10 +190,9 @@ void femPoissonSolve(femPoissonProblem *theProblem)
     if(theEdges->edges[i].elem[1] == -1){
       for(j=0;j<2;j++){
         double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
-        double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;;
+        double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;
         femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
         femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);
-        printf("Nahi\n");
       }
     }
   }

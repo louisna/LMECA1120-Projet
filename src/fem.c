@@ -451,7 +451,8 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
     theGrains->vx = malloc(n*sizeof(double));
     theGrains->vy = malloc(n*sizeof(double));
     theGrains->r  = malloc(n*sizeof(double));
-    theGrains->m  = malloc(n*sizeof(double));       
+    theGrains->m  = malloc(n*sizeof(double));
+    theGrains->elem = malloc(n*sizeof(int));    
     theGrains->dvBoundary = malloc(n * sizeof(double));
     theGrains->dvContacts = malloc(nContact * sizeof(double));
    
@@ -462,6 +463,7 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
         theGrains->y[i] = (i/5) * r * 2.5 + 2 * r + radiusIn;
         theGrains->vx[i] = 0.0;
         theGrains->vy[i] = 0.0; 
+        theGrains->elem[i] = 0.0;
         theGrains->dvBoundary[i] = 0.0; }
  
     for(i = 0; i < nContact; i++)  
@@ -470,7 +472,7 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
   
     return theGrains;
 }
-
+/*
 femGrains *femGrainsCreateTiny(double radiusIn, double radiusOut)
 {
     femGrains *theGrains = malloc(sizeof(femGrains));
@@ -509,6 +511,7 @@ femGrains *femGrainsCreateTiny(double radiusIn, double radiusOut)
      
     return theGrains;
 }
+*/
 
 void femGrainsFree(femGrains *theGrains)
 {
@@ -518,6 +521,7 @@ void femGrainsFree(femGrains *theGrains)
     free(theGrains->vy);
     free(theGrains->r);
     free(theGrains->m);
+    free(theGrains->elem);
     free(theGrains->dvBoundary);
     free(theGrains->dvContacts);
     free(theGrains);
