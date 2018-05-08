@@ -192,7 +192,8 @@ void femPoissonSolve(femPoissonProblem *theProblem)
         double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
         double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;;
         femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
-        femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);     
+        femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);
+        printf("Nahi\n");
       }
     }
   }
