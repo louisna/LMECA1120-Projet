@@ -330,8 +330,12 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
 # ifndef NOUPDATE
 
 
-void femGrainsUpdate(femGrains *myGrains, double dt, double tol, double iterMax)
+void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double dt, double tol, double iterMax)
 {
+
+    femPoissonSolve(theProblem);
+    double* B = theProblem->B;
+
     int i;    
     int n = myGrains->n;
     
@@ -347,9 +351,10 @@ void femGrainsUpdate(femGrains *myGrains, double dt, double tol, double iterMax)
 // 
 // -1- Calcul des nouvelles vitesses des grains sur base de la gravit� et de la trainee
 //
+    findElement(myGrains, theProblem);
 
     for(i = 0; i < n; i++) {
-        double fx = m[i] * gx - gamma * vx[i];
+        double fx = m[i] * gx - gamma * vx[i] + gamma * B[myGrains->elem[i]];
         double fy = m[i] * gy - gamma * vy[i];
         vx[i] += fx * dt / m[i];
         vy[i] += fy * dt / m[i];  }
