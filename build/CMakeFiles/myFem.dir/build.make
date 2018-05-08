@@ -34,19 +34,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /Applications/CMake.app/Contents/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /Applications/CMake.app/Contents/bin/cmake -E remove -f
+RM = /usr/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet
+CMAKE_SOURCE_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build
+CMAKE_BINARY_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/myFem.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/myFem.dir/flags.make
 
 CMakeFiles/myFem.dir/src/fem.c.o: CMakeFiles/myFem.dir/flags.make
 CMakeFiles/myFem.dir/src/fem.c.o: ../src/fem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/myFem.dir/src/fem.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/fem.c.o   -c /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/myFem.dir/src/fem.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/fem.c.o   -c /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.c
 
 CMakeFiles/myFem.dir/src/fem.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/myFem.dir/src/fem.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.c > CMakeFiles/myFem.dir/src/fem.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.c > CMakeFiles/myFem.dir/src/fem.c.i
 
 CMakeFiles/myFem.dir/src/fem.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/myFem.dir/src/fem.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.c -o CMakeFiles/myFem.dir/src/fem.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.c -o CMakeFiles/myFem.dir/src/fem.c.s
 
 CMakeFiles/myFem.dir/src/fem.c.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/myFem.dir/src/fem.c.o.provides.build: CMakeFiles/myFem.dir/src/fem.c.
 
 CMakeFiles/myFem.dir/src/glfem.c.o: CMakeFiles/myFem.dir/flags.make
 CMakeFiles/myFem.dir/src/glfem.c.o: ../src/glfem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/myFem.dir/src/glfem.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/glfem.c.o   -c /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/myFem.dir/src/glfem.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/glfem.c.o   -c /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.c
 
 CMakeFiles/myFem.dir/src/glfem.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/myFem.dir/src/glfem.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.c > CMakeFiles/myFem.dir/src/glfem.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.c > CMakeFiles/myFem.dir/src/glfem.c.i
 
 CMakeFiles/myFem.dir/src/glfem.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/myFem.dir/src/glfem.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.c -o CMakeFiles/myFem.dir/src/glfem.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.c -o CMakeFiles/myFem.dir/src/glfem.c.s
 
 CMakeFiles/myFem.dir/src/glfem.c.o.requires:
 
@@ -107,16 +107,16 @@ CMakeFiles/myFem.dir/src/glfem.c.o.provides.build: CMakeFiles/myFem.dir/src/glfe
 
 CMakeFiles/myFem.dir/src/homework.c.o: CMakeFiles/myFem.dir/flags.make
 CMakeFiles/myFem.dir/src/homework.c.o: ../src/homework.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/myFem.dir/src/homework.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/homework.c.o   -c /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/homework.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/myFem.dir/src/homework.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/homework.c.o   -c /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/homework.c
 
 CMakeFiles/myFem.dir/src/homework.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/myFem.dir/src/homework.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/homework.c > CMakeFiles/myFem.dir/src/homework.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/homework.c > CMakeFiles/myFem.dir/src/homework.c.i
 
 CMakeFiles/myFem.dir/src/homework.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/myFem.dir/src/homework.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/homework.c -o CMakeFiles/myFem.dir/src/homework.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/homework.c -o CMakeFiles/myFem.dir/src/homework.c.s
 
 CMakeFiles/myFem.dir/src/homework.c.o.requires:
 
@@ -131,16 +131,16 @@ CMakeFiles/myFem.dir/src/homework.c.o.provides.build: CMakeFiles/myFem.dir/src/h
 
 CMakeFiles/myFem.dir/src/main.c.o: CMakeFiles/myFem.dir/flags.make
 CMakeFiles/myFem.dir/src/main.c.o: ../src/main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/myFem.dir/src/main.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/main.c.o   -c /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/main.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/myFem.dir/src/main.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/myFem.dir/src/main.c.o   -c /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/main.c
 
 CMakeFiles/myFem.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/myFem.dir/src/main.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/main.c > CMakeFiles/myFem.dir/src/main.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/main.c > CMakeFiles/myFem.dir/src/main.c.i
 
 CMakeFiles/myFem.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/myFem.dir/src/main.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/main.c -o CMakeFiles/myFem.dir/src/main.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/nahijr/Documents/GitHub/LMECA1120-Projet/src/main.c -o CMakeFiles/myFem.dir/src/main.c.s
 
 CMakeFiles/myFem.dir/src/main.c.o.requires:
 
@@ -169,8 +169,12 @@ myFem: CMakeFiles/myFem.dir/src/homework.c.o
 myFem: CMakeFiles/myFem.dir/src/main.c.o
 myFem: CMakeFiles/myFem.dir/build.make
 myFem: glfw-3.2.1/src/libglfw3.a
+myFem: /usr/lib/x86_64-linux-gnu/libGL.so
+myFem: /usr/lib/x86_64-linux-gnu/librt.so
+myFem: /usr/lib/x86_64-linux-gnu/libm.so
+myFem: /usr/lib/x86_64-linux-gnu/libX11.so
 myFem: CMakeFiles/myFem.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable myFem"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable myFem"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/myFem.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -190,6 +194,6 @@ CMakeFiles/myFem.dir/clean:
 .PHONY : CMakeFiles/myFem.dir/clean
 
 CMakeFiles/myFem.dir/depend:
-	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles/myFem.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nahijr/Documents/GitHub/LMECA1120-Projet /home/nahijr/Documents/GitHub/LMECA1120-Projet /home/nahijr/Documents/GitHub/LMECA1120-Projet/build /home/nahijr/Documents/GitHub/LMECA1120-Projet/build /home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles/myFem.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/myFem.dir/depend
 
