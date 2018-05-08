@@ -8,7 +8,9 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 1.0
+#define VEXT 2.4
+double radiusOut;
+double radiusIn;
 
 
 # ifndef NOPOISSONCREATE
@@ -189,12 +191,28 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   int done = 0;
   for(i=0;i<theEdges->nEdge && !done;i++){
     if(theEdges->edges[i].elem[1] == -1){
-      for(j=0;j<2;j++){
-        double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
-        double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;
-        femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
-        femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);
-      }
+        double xe1 = theMesh->X[theEdges->edges[i].node[0]];
+        double ye1 = theMesh->Y[theEdges->edges[i].node[0]];
+        double xe2 = theMesh->X[theEdges->edges[i].node[1]];
+        double ye2 = theMesh->Y[theEdges->edges[i].node[1]];
+        double r1 = sqrt(xe1*xe1 + ye1*ye1);
+        if(r1 < 2.0*0.95){
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[0], 0); 
+          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], 0);
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], 0); 
+          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], 0);
+        }
+        else{
+          double t1 = atan2(xe1,ye1); double t2 = atan2(xe2,ye2);
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[0], VEXT*cos(t1)); 
+          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], -VEXT*sin(t2));
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], VEXT*cos(t1)); 
+          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], -VEXT*sin(t2));
+        }
+        //double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
+        //double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;
+        //femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
+        //femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);
     }
   }
 
@@ -220,9 +238,14 @@ void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_r
 
 # ifndef FINDELEMENT
 
-void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
+double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
   femMesh *theMesh = theProblem->mesh;
   int n_g     = theGrains->n;
+  double ** smah = malloc(n_g*sizeof(double*));
+  int k;
+  for(k=0;k<n_g;k++){
+    smah[k] = malloc(2*sizeof(double));
+  }
   int *elem_g = theGrains->elem;
   double *x_g    = theGrains->x;
   double *y_g    = theGrains->y;
@@ -231,11 +254,13 @@ void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
   double *Y_m    = theMesh->Y;
   int *elem_m = theMesh->elem;
   int n_e     = theMesh->nElem;
+  double *B = theProblem->system->B;
+  double *B2 = theProblem->system2->B;
 
   int i,j;
   double x_elem[3];
   double y_elem[3];
-  int map[4];
+  int map[2];
   double iso[2];
 
   for(i=0;i<n_g;i++){
@@ -250,11 +275,14 @@ void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
       if(iso[0] <= 1 && iso[0] >= 0 && iso[1] <= 1 && iso[1] >= 0 && iso[1] + iso[0] <= 1){
         dedans = 1;
         elem_g[i] = j;
+        smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
+        smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
       }
 
     }
 
   }
+  return smah;
 
 }
 
@@ -339,6 +367,8 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
 
     int i;    
     int n = myGrains->n;
+    radiusOut = myGrains->radiusOut;
+    radiusIn = myGrains->radiusIn;
     
     double *x          = myGrains->x;
     double *y          = myGrains->y;
@@ -352,12 +382,14 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
 // 
 // -1- Calcul des nouvelles vitesses des grains sur base de la gravit� et de la trainee
 //
-    findElement(myGrains, theProblem);
+    double **smah =findElement(myGrains, theProblem);
 
     for(i = 0; i < n; i++) {
-      printf("Vitesses : %f %f\n", B[myGrains->elem[i]], B2[myGrains->elem[i]]);
-        double fx = m[i] * 0 - gamma * vx[i] + gamma * B[myGrains->elem[i]];
-        double fy = m[i] * gy - gamma * vy[i] + gamma * B2[myGrains->elem[i]];
+      int elem_x = B[myGrains->elem[i]];
+      int elem_y = B2[myGrains->elem[i]];
+      //printf("Vitesses : %f \n", B[myGrains->elem[i]]);
+        double fx = m[i] * 0 - gamma * vx[i] + gamma * smah[i][0];
+        double fy = m[i] * gy - gamma * vy[i] + gamma * smah[i][1];
         vx[i] += fx * dt / m[i];
         vy[i] += fy * dt / m[i];  }
 

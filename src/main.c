@@ -13,8 +13,8 @@
 
 int main(void)
 {   
-    int    n = 1;
-    double radius    = 0.1;
+    int    n = 100;
+    double radius    = 0.03;
     double mass      = 0.01;
     double radiusIn  = 0.5;
     double radiusOut = 2.0;    
@@ -33,7 +33,7 @@ int main(void)
     printf("Number of segments    : %4d\n", theProblem->edges->nBoundary);
     printf("Number of unknowns    : %4d\n", theProblem->system->size);
 
-    femPoissonSolve(theProblem);   
+    femPoissonSolve(theProblem); 
  
     printf("Maximum value : %.4f\n", femMax(theProblem->system->B,theProblem->system->size));
     fflush(stdout);

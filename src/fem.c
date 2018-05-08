@@ -372,10 +372,10 @@ void femFullSystemPrint(femFullSystem *mySystem)
     size = mySystem->size;
     
     for (i=0; i < size; i++) {
-        for (j=0; j < size; j++)
-            if (A[i][j] == 0)  printf("         ");   
-            else               printf(" %+.1e",A[i][j]);
-        printf(" :  %+.1e \n",B[i]); }
+        //for (j=0; j < size; j++)
+        //    if (A[i][j] == 0)  printf("         ");   
+        //    else               printf(" %+.1e",A[i][j]);
+        printf("B[%d] :  %+.3e \n",i, B[i]); }
 }
 
 double* femFullSystemEliminate(femFullSystem *mySystem)
