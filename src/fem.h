@@ -128,7 +128,7 @@ void                 femPoissonSolve(femPoissonProblem *theProblem);
 femGrains  *femGrainsCreateSimple(int n, double r, double m, double radiusIn, double radiusOut);
 femGrains  *femGrainsCreateTiny(double radiusIn, double radiusOut);
 void        femGrainsFree(femGrains *myGrains);
-void        femGrainsUpdate(femGrains *myGrains, double dt, double tol, double iterMax);
+void        femGrainsUpdate(femPoissonProblem *theProblem,femGrains *myGrains, double dt, double tol, double iterMax);
 double      femGrainsContactIterate(femGrains *myGrains, double dt, int iter);
 
 double               femMin(double *x, int n);

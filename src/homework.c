@@ -8,7 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 10.0
+#define VEXT 1.0
 
 
 # ifndef NOPOISSONCREATE
@@ -202,9 +202,9 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   femFullSystemEliminate(theSystem);
   femFullSystemEliminate(theSystem2);
 
-  for(i=0;i<theSystem->size;i++){
-    theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
-  }
+  //for(i=0;i<theSystem->size;i++){
+  //  theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
+  //}
 }
 
 # endif
@@ -333,8 +333,9 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
 void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double dt, double tol, double iterMax)
 {
 
-    femPoissonSolve(theProblem);
-    double* B = theProblem->B;
+    //femPoissonSolve(theProblem);
+    double* B = theProblem->system->B;
+    double* B2 = theProblem->system2->B;
 
     int i;    
     int n = myGrains->n;
@@ -354,8 +355,9 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
     findElement(myGrains, theProblem);
 
     for(i = 0; i < n; i++) {
-        double fx = m[i] * gx - gamma * vx[i] + gamma * B[myGrains->elem[i]];
-        double fy = m[i] * gy - gamma * vy[i];
+      printf("Vitesses : %f %f\n", B[myGrains->elem[i]], B2[myGrains->elem[i]]);
+        double fx = m[i] * 0 - gamma * vx[i] + gamma * B[myGrains->elem[i]];
+        double fy = m[i] * gy - gamma * vy[i] + gamma * B2[myGrains->elem[i]];
         vx[i] += fx * dt / m[i];
         vy[i] += fy * dt / m[i];  }
 

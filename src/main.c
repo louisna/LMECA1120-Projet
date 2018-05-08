@@ -13,9 +13,9 @@
 
 int main(void)
 {   
-    int    n = 15;
+    int    n = 1;
     double radius    = 0.1;
-    double mass      = 0.1;
+    double mass      = 0.01;
     double radiusIn  = 0.5;
     double radiusOut = 2.0;    
     double dt      = 1e-1;
@@ -69,7 +69,7 @@ int main(void)
 
         if (t < tEnd && theRunningMode == 1) {
             printf("Time = %4g : ",t);  
-            femGrainsUpdate(theGrains,dt,tol,iterMax);
+            femGrainsUpdate(theProblem,theGrains,dt,tol,iterMax);
             t += dt; }
         while ( glfwGetTime()-currentTime < theVelocityFactor ) {
           if (glfwGetKey(window,'R') == GLFW_PRESS) 
