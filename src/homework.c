@@ -65,39 +65,35 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 
 # endif
 
-void femIterativeSolverAssemble(femIterativeSolver* mySolver, double *Aloc, double *Bloc, double *Uloc, int *map, int nLoc)
+void femIterativeSolverAssemble(femIterativeSolver* mySolver, double **A, double *B, double *U)
 {
     int i,j;
     double *s = mySolver->S;
     double *d = mySolver->D;
     double *r = mySolver->R;
     int myRow;
+    int iter = mySolver->iter;
     /* 
     * On ne calcule R qu'a la premiere iteration, car r(k+1) est
     * calcule a chaque iteration
     */
-    if(mySolver->iter==0){
-        for (i = 0; i < nLoc; i++) { 
-            myRow = map[i];
-            
-            for(j = 0; j < nLoc; j++) {
-                r[myRow] += Aloc[i*nLoc+j]*Uloc[j]; 
-
-            }
-            r[myRow] -= Bloc[i];
+    if(iter==0){
+      for(i=0;i<mySolver->size;i++){
+        for(j=0;j<mySolver->size;j++){
+          r[i] += A[i][j]*U[j]-B[i];
         }
+      }
     }
     /*
     * S, lui, doit etre calcule a chaque iteration car la direction
     * d change a chaque iteration
     */
-    for(i=0;i<nLoc;i++){
-        myRow = map[i];
-        for(j=0;j<nLoc;j++){
-            int col = map[j];
-            s[myRow] += Aloc[i*nLoc+j] * d[col];
-        }
+    for(i=0;i<mySolver->size;i++){
+      for(j=0;j<mySolver->size;j++){
+        s[i] += A[i][j]*d[j];
+      }
     }
+    
 }
 
 void femIterativeSolverConstrain(femIterativeSolver* mySolver, int myNode, double myValue) 
@@ -239,8 +235,8 @@ void femFullSystemIterate(femPoissonProblem *theProblem){
           Bloc[k] += phi[k] * J_e *weight;
         }
       }
-      femIterativeSolverAssemble(theSolver,Aloc,Bloc,Uloc,map,theSpace->n);
-      femIterativeSolverAssemble(theSolver2,Aloc2,Bloc2,Uloc2,map,theSpace->n);
+      //femIterativeSolverAssemble(theSolver,Aloc,Bloc,Uloc,map,theSpace->n);
+      //femIterativeSolverAssemble(theSolver2,Aloc2,Bloc2,Uloc2,map,theSpace->n);
     }
     int done = 0;
     for(i=0;i<theEdges->nEdge && !done;i++){
@@ -300,10 +296,21 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   femFullSystem *theSystem2 = theProblem->system2;
   double termIndep = 1.0;
   double condHomo = 0.0;
+  femIterativeSolver *theSolver = femIterativeSolverCreate(theSystem->size);
+  femIterativeSolver *theSolver2 = femIterativeSolverCreate(theSystem2->size);
+  int condition = 0;
+  int condition2 = 0;
+  do{
 
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;
   int map[4];
+  double U[theSystem2->size], U2[theSystem2->size];
+  for(i=0;i<theSystem2->size;i++){
+    U[i] = 0;
+    U2[i] = 0;
+  }
+
   for (i = 0; i < theMesh->nElem; i++)
   {
     //creation d'un maillage local
@@ -381,9 +388,29 @@ void femPoissonSolve(femPoissonProblem *theProblem)
     }
   }
 
+
+  femIterativeSolverAssemble(theSolver,theSystem->A,theSystem->B,U);
+  femIterativeSolverAssemble(theSolver2,theSystem2->A,theSystem2->B,U2);
+
+  double *solve = femIterativeSolverEliminate(theSolver);
+  double *solve2 = femIterativeSolverEliminate(theSolver2);
+
+  for(i=0;i<theSystem2->size;i++){
+    theSystem->B[i] += solve[i];
+    theSystem2->B[i] += solve2[i];
+  }
+  condition = femIterativeSolverConverged(theSolver); condition2 = femIterativeSolverConverged(theSolver2);
+  }while(condition == 0 || condition2 == 0);
+  if(condition2 == -1 || condition == -1){
+    printf("Erreur, trop d'iterations\n");
+    exit(EXIT_FAILURE);
+  }
+
+
+
   //Resolution du systeme par elimination de Gauss
-  femFullSystemEliminate(theSystem);
-  femFullSystemEliminate(theSystem2);
+  //femFullSystemEliminate(theSystem);
+  //femFullSystemEliminate(theSystem2);
 }
 
 # endif

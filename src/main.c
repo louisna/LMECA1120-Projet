@@ -33,8 +33,8 @@ int main(void)
     printf("Number of segments    : %4d\n", theProblem->edges->nBoundary);
     printf("Number of unknowns    : %4d\n", theProblem->system->size);
 
-    //femPoissonSolve(theProblem); 
-    femFullSystemIterate(theProblem);
+    femPoissonSolve(theProblem); 
+    //femFullSystemIterate(theProblem);
  
     printf("Maximum value : %.4f\n", femMax(theProblem->system->B,theProblem->system->size));
     fflush(stdout);

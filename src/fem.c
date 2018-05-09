@@ -521,7 +521,7 @@ int femIterativeSolverConverged(femIterativeSolver *mySolver)
 {
     int  testConvergence = 0;
     if (mySolver->iter  > 3000)     testConvergence = -1;
-    if (mySolver->error < 10.0e-2)  testConvergence = 1;
+    if (mySolver->error < 10.0e-6)  testConvergence = 1;
     return(testConvergence);
 }
 
