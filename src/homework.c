@@ -65,9 +65,11 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 
 # endif
 
-void femIterativeSolverAssemble(femIterativeSolver* mySolver, double **A, double *B, double *U)
+void femIterativeSolverAssemble(femIterativeSolver* mySolver, femFullSystem *theSystem)
 {
     int i,j;
+    double **A = theSystem->A;
+    double *B = theSystem->B;
     double *s = mySolver->S;
     double *d = mySolver->D;
     double *r = mySolver->R;
@@ -80,8 +82,9 @@ void femIterativeSolverAssemble(femIterativeSolver* mySolver, double **A, double
     if(iter==0){
       for(i=0;i<mySolver->size;i++){
         for(j=0;j<mySolver->size;j++){
-          r[i] += A[i][j]*U[j]-B[i];
+          r[i] += A[i][j]*mySolver->X[j];
         }
+        r[i] -= B[i];
       }
     }
     /*
@@ -130,7 +133,7 @@ double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
         double alpha = -error/da;
 
         for(i=0;i<taille;i++){
-            dx[i] = alpha*d[i]; //erreur peut-etre
+            dx[i] += alpha*d[i]; //erreur peut-etre
         }
 
         for(i=0;i<taille;i++){
@@ -154,6 +157,7 @@ double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
 
     return mySolver->X;
 }
+/*
 
 #ifndef FEMFULLSYSTEMITERATE
 
@@ -280,6 +284,45 @@ void femFullSystemIterate(femPoissonProblem *theProblem){
 }
 
 #endif
+*/
+
+# ifndef FEMCOUETTE
+
+void femCouetteSolve(femPoissonProblem *theProblem){
+  femIterativeSolver *theSolver = femIterativeSolverCreate(theProblem->system->size);
+  femIterativeSolver *theSolver2 = femIterativeSolverCreate(theProblem->system2->size);
+
+  int testconvergence = 0;
+  do{
+    femIterativeSolverAssemble(theSolver, theProblem->system);
+    femIterativeSolverEliminate(theSolver);
+    testconvergence = femIterativeSolverConverged(theSolver);
+  }while(testconvergence == 0);
+  if(testconvergence == -1){
+    printf("Trop d'iterations\n");
+    exit(EXIT_FAILURE);
+  }
+  for(int i=0; i<theSolver->size;i++){
+    theProblem->system->B[i] = theSolver->X[i];
+  }
+  do{
+    femIterativeSolverAssemble(theSolver2, theProblem->system2);
+    femIterativeSolverEliminate(theSolver2);
+    testconvergence = femIterativeSolverConverged(theSolver2);
+  }while(testconvergence == 0);
+  if(testconvergence == -1){
+    printf("Trop d'iterations 2\n");
+    exit(EXIT_FAILURE);
+  }
+  for(int i=0; i<theSolver->size;i++){
+    theProblem->system2->B[i] = theSolver2->X[i];
+  }
+  free(theSolver);
+  free(theSolver2);
+}
+
+#endif
+
 
 # ifndef NOPOISSONSOLVE
 
@@ -296,11 +339,8 @@ void femPoissonSolve(femPoissonProblem *theProblem)
   femFullSystem *theSystem2 = theProblem->system2;
   double termIndep = 1.0;
   double condHomo = 0.0;
-  femIterativeSolver *theSolver = femIterativeSolverCreate(theSystem->size);
-  femIterativeSolver *theSolver2 = femIterativeSolverCreate(theSystem2->size);
   int condition = 0;
   int condition2 = 0;
-  do{
 
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;
@@ -388,24 +428,7 @@ void femPoissonSolve(femPoissonProblem *theProblem)
     }
   }
 
-
-  femIterativeSolverAssemble(theSolver,theSystem->A,theSystem->B,U);
-  femIterativeSolverAssemble(theSolver2,theSystem2->A,theSystem2->B,U2);
-
-  double *solve = femIterativeSolverEliminate(theSolver);
-  double *solve2 = femIterativeSolverEliminate(theSolver2);
-
-  for(i=0;i<theSystem2->size;i++){
-    theSystem->B[i] += solve[i];
-    theSystem2->B[i] += solve2[i];
-  }
-  condition = femIterativeSolverConverged(theSolver); condition2 = femIterativeSolverConverged(theSolver2);
-  }while(condition == 0 || condition2 == 0);
-  if(condition2 == -1 || condition == -1){
-    printf("Erreur, trop d'iterations\n");
-    exit(EXIT_FAILURE);
-  }
-
+  femCouetteSolve(theProblem);
 
 
   //Resolution du systeme par elimination de Gauss
