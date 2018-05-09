@@ -8,7 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 2.4
+#define VEXT 3.0
 double radiusOut;
 double radiusIn;
 
@@ -277,8 +277,15 @@ double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
         elem_g[i] = j;
         smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
         smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
+        //smah[i][0] = (1 - x_loc - y_loc)*B[map[0]] + x_loc*B[map[1]] + y_loc*B[map[2]];
+        //smah[i][1] = (1 - x_loc - y_loc)*B2[map[0]] + x_loc*B2[map[1]] + y_loc*B2[map[2]];
       }
 
+    }
+    if(dedans == 0){
+      elem_g[i] = -1;
+      smah[i][0] = 0.0;
+      smah[i][1] = 0.0;
     }
 
   }
@@ -385,8 +392,10 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
     double **smah =findElement(myGrains, theProblem);
 
     for(i = 0; i < n; i++) {
-      int elem_x = B[myGrains->elem[i]];
-      int elem_y = B2[myGrains->elem[i]];
+      if(myGrains->elem[i] != -1){
+        int elem_x = B[myGrains->elem[i]];
+        int elem_y = B2[myGrains->elem[i]];
+      }
       //printf("Vitesses : %f \n", B[myGrains->elem[i]]);
         double fx = m[i] * 0 - gamma * vx[i] + gamma * smah[i][0];
         double fy = m[i] * gy - gamma * vy[i] + gamma * smah[i][1];

@@ -13,13 +13,13 @@
 
 int main(void)
 {   
-    int    n = 100;
-    double radius    = 0.03;
-    double mass      = 0.01;
-    double radiusIn  = 0.5;
+    int    n = 45;
+    double radius    = 0.07;
+    double mass      = 0.052;
+    double radiusIn  = 0.4;
     double radiusOut = 2.0;    
     double dt      = 1e-1;
-    double tEnd    = 8.0;
+    double tEnd    = 60.0;
     double tol     = 1e-6;
     double t       = 0;
     double iterMax = 100;
