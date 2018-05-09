@@ -65,6 +65,17 @@ typedef struct {
     int size;
 } femFullSystem;
 
+typedef struct 
+{
+    double *R;
+    double *D;
+    double *S;
+    double *X; 
+    double error;      
+    int size;
+    int iter;        
+} femIterativeSolver;
+
 typedef struct {
     femMesh *mesh;
     femEdges *edges;
@@ -130,6 +141,13 @@ femGrains  *femGrainsCreateTiny(double radiusIn, double radiusOut);
 void        femGrainsFree(femGrains *myGrains);
 void        femGrainsUpdate(femPoissonProblem *theProblem,femGrains *myGrains, double dt, double tol, double iterMax);
 double      femGrainsContactIterate(femGrains *myGrains, double dt, int iter);
+
+femIterativeSolver  *femIterativeSolverCreate(int size);
+void                 femIterativeSolverFree(femIterativeSolver *mySolver);
+void                 femIterativeSolverInit(femIterativeSolver *mySolver);
+void                 femIterativeSolverPrint(femIterativeSolver *mySolver);
+void                 femIterativeSolverPrintInfos(femIterativeSolver *mySolver);
+int                  femIterativeSolverConverged(femIterativeSolver *mySolver);
 
 double               femMin(double *x, int n);
 double               femMax(double *x, int n);

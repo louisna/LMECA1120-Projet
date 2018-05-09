@@ -65,6 +65,226 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 
 # endif
 
+void femIterativeSolverAssemble(femIterativeSolver* mySolver, double *Aloc, double *Bloc, double *Uloc, int *map, int nLoc)
+{
+    int i,j;
+    double *s = mySolver->S;
+    double *d = mySolver->D;
+    double *r = mySolver->R;
+    int myRow;
+    /* 
+    * On ne calcule R qu'a la premiere iteration, car r(k+1) est
+    * calcule a chaque iteration
+    */
+    if(mySolver->iter==0){
+        for (i = 0; i < nLoc; i++) { 
+            myRow = map[i];
+            
+            for(j = 0; j < nLoc; j++) {
+                r[myRow] += Aloc[i*nLoc+j]*Uloc[j]; 
+
+            }
+            r[myRow] -= Bloc[i];
+        }
+    }
+    /*
+    * S, lui, doit etre calcule a chaque iteration car la direction
+    * d change a chaque iteration
+    */
+    for(i=0;i<nLoc;i++){
+        myRow = map[i];
+        for(j=0;j<nLoc;j++){
+            int col = map[j];
+            s[myRow] += Aloc[i*nLoc+j] * d[col];
+        }
+    }
+}
+
+void femIterativeSolverConstrain(femIterativeSolver* mySolver, int myNode, double myValue) 
+{   
+    mySolver->R[myNode] = myValue;
+    mySolver->S[myNode] = myValue;
+}
+
+double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
+{
+    mySolver->iter++;
+    double error = 0.0; int i;
+    for (i=0; i < mySolver->size; i++) {
+        error += (mySolver->R[i])*(mySolver->R[i]);
+    }
+
+    int taille = mySolver->size;
+    double *s = mySolver->S;
+    double *d = mySolver->D;
+    double *r = mySolver->R;
+    double *dx = mySolver->X;
+
+    if(mySolver->iter==1){
+        for(i=0;i<taille;i++){
+            d[i] = r[i];
+            dx[i] = 0;
+        }
+    }
+    else{
+        double da = 0.0;
+        for(i=0;i<taille;i++){
+            da += s[i]*r[i];
+        }
+        double alpha = -error/da;
+
+        for(i=0;i<taille;i++){
+            dx[i] = alpha*d[i]; //erreur peut-etre
+        }
+
+        for(i=0;i<taille;i++){
+            r[i] = r[i] + alpha*s[i];
+        }
+
+        double nb = 0.0;
+        for(i=0;i<taille;i++){
+            nb += r[i]*r[i];
+        }
+
+        double beta = nb/error;
+
+        for(i=0;i<taille;i++){
+            d[i] = r[i] + beta*d[i];
+            s[i] = 0.0;
+        }
+    }
+    mySolver->error = sqrt(error);
+
+
+    return mySolver->X;
+}
+
+#ifndef FEMFULLSYSTEMITERATE
+
+void femFullSystemIterate(femPoissonProblem *theProblem){
+  int option = 1;
+  femMesh *theMesh=theProblem->mesh;
+  femEdges *theEdges=theProblem->edges;
+  femDiscrete *theSpace=theProblem->space;
+  femIntegration *theRule=theProblem->rule;
+  femFullSystem *theSystem=theProblem->system;
+  femFullSystem *theSystem2 = theProblem->system2;
+
+  femIterativeSolver *theSolver = femIterativeSolverCreate(theSystem->size);
+  femIterativeSolver *theSolver2 = femIterativeSolverCreate(theSystem2->size);
+
+  double testconvergence = 1;
+  double testconvergence2 = 1;
+  do{
+
+    double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
+    int i,j,k,l, i0;
+    int map[4];
+    double Aloc[16], Bloc[4], Uloc[4];
+    double Aloc2[16], Bloc2[4], Uloc2[4];
+    for (i = 0; i < theMesh->nElem; i++)
+    {
+      for (i0 = 0; i0 < theSpace->n; i0++){      
+        Bloc[i0] = 0;
+        Bloc2[i0] = 0;
+      }
+      for (i0 = 0; i0 < (theSpace->n)*(theSpace->n); i0++){ 
+        Aloc[i0] = 0;
+        Aloc2[i0] = 0;
+      }
+      //creation d'un maillage local
+      femMeshLocal(theMesh,i,map,x,y);
+
+      int nSpace=theSpace->n;
+      for (j=0; j < theRule->n; j++)
+      {
+        //valeurs d'integration
+        double xsi    = theRule->xsi[j];
+        double eta    = theRule->eta[j];
+        double weight = theRule->weight[j];
+
+        //fonctions de forme locales
+        femDiscretePhi2(theSpace,xsi,eta,phi);
+        //derivees fonctions de forme locales par rapport à xsi et eta
+        femDiscreteDphi2(theSpace,xsi,eta,dphidxsi,dphideta);
+
+        //passage du plan xsi-eta au plan x-y
+        double dxdxsi = 0, dxdeta = 0, dydxsi = 0, dydeta = 0 ;
+        for (k = 0; k < nSpace; k++)
+        {
+          dxdxsi = dxdxsi + x[k]*dphidxsi[k];  
+          dxdeta = dxdeta + x[k]*dphideta[k];   
+          dydxsi = dydxsi + y[k]*dphidxsi[k];   
+          dydeta = dydeta + y[k]*dphideta[k];
+        }
+
+        //calcul du jacobien local (voir slide 17 CM4)
+        double J_e = fabs(dxdxsi * dydeta - dxdeta * dydxsi);
+
+        for (k = 0; k < nSpace; k++)
+        {
+          dphidx[k] = (dphidxsi[k] * dydeta - dphideta[k] * dydxsi) / J_e;
+          dphidy[k] = (dphideta[k] * dxdxsi - dphidxsi[k] * dxdeta) / J_e;
+        }
+        for (k = 0; k < nSpace; k++)
+        {
+          for(l = 0; l < nSpace; l++)
+          {
+            Aloc[k*(theSpace->n)+l] += (dphidx[k] * dphidx[l] + dphidy[k] * dphidy[l]) * J_e * weight;
+            Aloc2[k*(theSpace->n)+l] += (dphidx[k] * dphidx[l] + dphidy[k] * dphidy[l]) * J_e * weight;
+
+          }
+        }
+        for (k = 0; k < nSpace; k++) {
+          Bloc[k] += phi[k] * J_e *weight;
+        }
+      }
+      femIterativeSolverAssemble(theSolver,Aloc,Bloc,Uloc,map,theSpace->n);
+      femIterativeSolverAssemble(theSolver2,Aloc2,Bloc2,Uloc2,map,theSpace->n);
+    }
+    int done = 0;
+    for(i=0;i<theEdges->nEdge && !done;i++){
+      if(theEdges->edges[i].elem[1] == -1){
+          double xe1 = theMesh->X[theEdges->edges[i].node[0]];
+          double ye1 = theMesh->Y[theEdges->edges[i].node[0]];
+          double xe2 = theMesh->X[theEdges->edges[i].node[1]];
+          double ye2 = theMesh->Y[theEdges->edges[i].node[1]];
+          double r1 = sqrt(xe1*xe1 + ye1*ye1);
+          if(r1 < 2.0*0.95){
+            femFullSystemConstrain(theSystem, theEdges->edges[i].node[0], 0); 
+            femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], 0);
+            femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], 0); 
+            femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], 0);
+          }
+          else{
+            double t1 = atan2(xe1,ye1); double t2 = atan2(xe2,ye2);
+            femFullSystemConstrain(theSystem, theEdges->edges[i].node[0], VEXT*cos(t1)); 
+            femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], -VEXT*sin(t2));
+            femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], VEXT*cos(t1)); 
+            femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], -VEXT*sin(t2));
+          }
+      }
+    }
+
+    double* soluce = femIterativeSolverEliminate(theSolver);
+    double* soluce2 = femIterativeSolverEliminate(theSolver2);
+    for (i = 0; i < theProblem->mesh->nNode; i++){
+      theSystem->B[i] += soluce[i];
+      theSystem2->B[i] += soluce2[i];
+    }
+    testconvergence = femIterativeSolverConverged(theSolver);
+    testconvergence2 = femIterativeSolverConverged(theSolver2);
+    //printf("iter: %d\n", theSolver->iter);
+  }while(testconvergence == 0 || testconvergence2 == 0);
+  if(testconvergence == -1 || testconvergence2 == -1){
+    printf("Erreur, trop d'iterations\n");
+    exit(EXIT_FAILURE);
+  }
+
+}
+
+#endif
+
 # ifndef NOPOISSONSOLVE
 
 
@@ -72,27 +292,18 @@ void femPoissonSolve(femPoissonProblem *theProblem)
 {
 
   int option = 1;
-
-  //copie de la structure de theProblem
   femMesh *theMesh=theProblem->mesh;
   femEdges *theEdges=theProblem->edges;
   femDiscrete *theSpace=theProblem->space;
   femIntegration *theRule=theProblem->rule;
-  //allocation du systeme (voir slides)
   femFullSystem *theSystem=theProblem->system;
   femFullSystem *theSystem2 = theProblem->system2;
-  //terme independant eq Poisson
   double termIndep = 1.0;
-  //conditions essentielles homogenes sur la frontiere
   double condHomo = 0.0;
 
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;
   int map[4];
-  /*
-  nous construisons un systeme lineaire discret en assemblant
-  element par element les matrices A et B de theSystem
-  */
   for (i = 0; i < theMesh->nElem; i++)
   {
     //creation d'un maillage local
@@ -116,14 +327,6 @@ void femPoissonSolve(femPoissonProblem *theProblem)
       double dxdxsi = 0, dxdeta = 0, dydxsi = 0, dydeta = 0 ;
       for (k = 0; k < nSpace; k++)
       {
-        /*
-        Approximations
-        X(xsi,eta)=Sum[x_i*Phi(xsi_i,eta_i)]
-        Y(xsi,eta)=Sum[y_i*Phi(xsi_i,eta_i)]
-        dX(xsi,eta)=Sum[x_i*dPhi(xsi_i,eta_i)]
-        dY(xsi,eta)=Sum[y_i*dPhi(xsi_i,eta_i)]
-        (voir slide 15 CM4)
-        */
         dxdxsi = dxdxsi + x[k]*dphidxsi[k];  
         dxdeta = dxdeta + x[k]*dphideta[k];   
         dydxsi = dydxsi + y[k]*dphidxsi[k];   
@@ -135,17 +338,9 @@ void femPoissonSolve(femPoissonProblem *theProblem)
 
       for (k = 0; k < nSpace; k++)
       {
-        /*
-        derivees fonctions de forme :
-            dphidx ne dependent pas de x
-            dphidy ne dependent pas de y
-        (voir slide 19 CM4)
-        */
         dphidx[k] = (dphidxsi[k] * dydeta - dphideta[k] * dydxsi) / J_e;
         dphidy[k] = (dphideta[k] * dxdxsi - dphidxsi[k] * dxdeta) / J_e;
       }
-
-      //remplissage des matrices A et B (voir slides 19-20 CM4) 
       for (k = 0; k < nSpace; k++)
       {
         for(l = 0; l < nSpace; l++)
@@ -157,37 +352,11 @@ void femPoissonSolve(femPoissonProblem *theProblem)
       }
       for (k = 0; k < nSpace; k++) {
         double numIntegrateB = phi[k] * J_e * weight * termIndep;
-        theSystem->B[map[k]] = 0;//theSystem->B[map[k]] + numIntegrateB;
+        theSystem->B[map[k]] = 0;
         theSystem2->B[map[k]] = 0;
       }
     }
   }
-
-  //on impose les contraintes sur certains segment
-  /*
-  for (i=0; i < theEdges->nEdge; i++)
-  {
-    if (theEdges->edges[i].elem[1] == -1)
-    {
-      double xe1 = theMesh->X[theEdges->edges[i].node[0]];
-      double ye1 = theMesh->Y[theEdges->edges[i].node[0]];
-      double xe2 = theMesh->X[theEdges->edges[i].node[1]];
-      double ye2 = theMesh->Y[theEdges->edges[i].node[1]];
-      double r1 = sqrt(xe1*xe1 + ye1*ye1);
-      double r2 = sqrt(xe2*xe2 + ye2*ye2);
-
-      for (j = 0; j < 2; j++)
-      {
-        //(voir slide 14 CM4)
-        if(r1 > 0.5 && r2>0.5){
-          femFullSystemConstrain(theSystem, theEdges->edges[i].node[j],VEXT);
-        }
-        else{
-          femFullSystemConstrain(theSystem,theEdges->edges[i].node[j],0);
-        }
-      }
-    }
-    */
   int done = 0;
   for(i=0;i<theEdges->nEdge && !done;i++){
     if(theEdges->edges[i].elem[1] == -1){
@@ -209,20 +378,12 @@ void femPoissonSolve(femPoissonProblem *theProblem)
           femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], VEXT*cos(t1)); 
           femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], -VEXT*sin(t2));
         }
-        //double value = theMesh->Y[theEdges->edges[i].node[j]]*VEXT;
-        //double value2 = -theMesh->X[theEdges->edges[i].node[j]]*VEXT;
-        //femFullSystemConstrain(theSystem, theEdges->edges[i].node[j], value); 
-        //femFullSystemConstrain(theSystem2, theEdges->edges[i].node[j], value2);
     }
   }
 
   //Resolution du systeme par elimination de Gauss
   femFullSystemEliminate(theSystem);
   femFullSystemEliminate(theSystem2);
-
-  //for(i=0;i<theSystem->size;i++){
-  //  theSystem->B[i] = sqrt(theSystem->B[i]*theSystem->B[i] + theSystem2->B[i]*theSystem2->B[i]);
-  //}
 }
 
 # endif
@@ -277,10 +438,7 @@ double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
         elem_g[i] = j;
         smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
         smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
-        //smah[i][0] = (1 - x_loc - y_loc)*B[map[0]] + x_loc*B[map[1]] + y_loc*B[map[2]];
-        //smah[i][1] = (1 - x_loc - y_loc)*B2[map[0]] + x_loc*B2[map[1]] + y_loc*B2[map[2]];
       }
-
     }
     if(dedans == 0){
       elem_g[i] = -1;

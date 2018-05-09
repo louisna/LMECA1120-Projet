@@ -472,46 +472,58 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
   
     return theGrains;
 }
-/*
-femGrains *femGrainsCreateTiny(double radiusIn, double radiusOut)
-{
-    femGrains *theGrains = malloc(sizeof(femGrains));
-    theGrains->n = 2;
-    theGrains->radiusIn   = radiusIn;
-    theGrains->radiusOut  = radiusOut;
-    theGrains->gravity[0] =  0.0;
-    theGrains->gravity[1] = -10;
-    theGrains->gamma = 0.0;
-           
-    theGrains->x  = malloc(2 * sizeof(double));
-    theGrains->y  = malloc(2 * sizeof(double));
-    theGrains->vx = malloc(2 * sizeof(double));
-    theGrains->vy = malloc(2 * sizeof(double));
-    theGrains->r  = malloc(2 * sizeof(double));
-    theGrains->m  = malloc(2 * sizeof(double));       
-    theGrains->dvBoundary = malloc(2 * sizeof(double));
-    theGrains->dvContacts = malloc(sizeof(double));
-   
-    theGrains->r[0] = 0.1;
-    theGrains->r[1] = 0.1;  
-    theGrains->m[0] = 1.0;
-    theGrains->m[1] = 1.0; 
-    theGrains->x[0] = 0.0; 
-    theGrains->x[1] = 0.0;
-    theGrains->y[0] = -radiusOut + 0.3; 
-    theGrains->y[1] = -radiusOut + 0.1; 
-    theGrains->vx[0] = 0.0; 
-    theGrains->vx[1] = 0.0;            
-    theGrains->vy[0] = 0.0; 
-    theGrains->vy[1] = 0.0; 
-    theGrains->dvBoundary[0] = 0.0;
-    theGrains->dvBoundary[1] = 0.0;
 
-    theGrains->dvContacts[0] = 0.0;
-     
-    return theGrains;
+femIterativeSolver *femIterativeSolverCreate(int size)
+{
+    femIterativeSolver *mySolver = malloc(sizeof(femIterativeSolver));
+    mySolver->R = malloc(sizeof(double)*size*4);      
+    mySolver->D = mySolver->R + size;       
+    mySolver->S = mySolver->R + size*2;       
+    mySolver->X = mySolver->R + size*3;       
+    mySolver->size = size;
+    femIterativeSolverInit(mySolver);
+    return(mySolver);
 }
-*/
+
+void femIterativeSolverFree(femIterativeSolver *mySolver)
+{
+    free(mySolver->R);
+    free(mySolver);
+}
+
+void femIterativeSolverInit(femIterativeSolver *mySolver)
+{
+    int i;
+    mySolver->iter = 0;
+    mySolver->error = 10.0e+12;
+    for (i=0 ; i < mySolver->size*4 ; i++) 
+        mySolver->R[i] = 0;        
+}
+ 
+void femIterativeSolverPrint(femIterativeSolver *mySolver)
+{
+    double  *R;
+    int     i, size;
+    R    = mySolver->R;
+    size = mySolver->size;
+
+    for (i=0; i < size; i++) {
+        printf("%d :  %+.1e \n",i,R[i]); }
+}
+
+void femIterativeSolverPrintInfos(femIterativeSolver *mySolver)
+{
+    if (mySolver->iter == 1)     printf("\n    Iterative solver \n");
+    printf("    Iteration %4d : %14.7e\n",mySolver->iter,mySolver->error);
+}
+
+int femIterativeSolverConverged(femIterativeSolver *mySolver)
+{
+    int  testConvergence = 0;
+    if (mySolver->iter  > 3000)     testConvergence = -1;
+    if (mySolver->error < 10.0e-2)  testConvergence = 1;
+    return(testConvergence);
+}
 
 void femGrainsFree(femGrains *theGrains)
 {
