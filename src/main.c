@@ -33,6 +33,7 @@ int main(void)
     printf("Number of segments    : %4d\n", theProblem->edges->nBoundary);
     printf("Number of unknowns    : %4d\n", theProblem->system->size);
 
+    
     femPoissonSolve(theProblem); 
     //femFullSystemIterate(theProblem);
  
