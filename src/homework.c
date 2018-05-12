@@ -8,7 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 0.0
+#define VEXT 3.0
 double radiusOut;
 double radiusIn;
 double mu = 1;
@@ -383,12 +383,12 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
     }
   }
 
-  femCouetteSolve(theProblem);
+  //femCouetteSolve(theProblem);
 
 
   //Resolution du systeme par elimination de Gauss
-  //femFullSystemEliminate(theSystem);
-  //femFullSystemEliminate(theSystem2);
+  femFullSystemEliminate(theSystem);
+  femFullSystemEliminate(theSystem2);
 }
 
 # endif
