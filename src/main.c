@@ -13,7 +13,7 @@
 
 int main(void)
 {   
-    int    n = 25;
+    int    n = 1;
     double radius    = 0.07;
     double mass      = 0.052;
     double radiusIn  = 0.4;

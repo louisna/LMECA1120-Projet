@@ -8,7 +8,7 @@ Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
 La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
 Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
 */
-#define VEXT 3.0
+#define VEXT 0.0
 double radiusOut;
 double radiusIn;
 double mu = 1;
@@ -352,8 +352,8 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
         theSystem->A[map[k]][map[l]] += gamma*grainsA;
         theSystem2->A[map[k]][map[l]] += gamma*grainsA;
       }
-      theSystem->B[map[k]] += gamma*myPhi[k]*theGrains->vy[i];
-      theSystem2->B[map[k]] += gamma*myPhi[k]*theGrains->vx[i];
+      theSystem->B[map[k]] = gamma*myPhi[k]*theGrains->vx[i];
+      theSystem2->B[map[k]] = gamma*myPhi[k]*theGrains->vy[i];
     }
 
 
@@ -376,8 +376,8 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
         else{
           double t1 = atan2(xe1,ye1); double t2 = atan2(xe2,ye2);
           femFullSystemConstrain(theSystem, theEdges->edges[i].node[0], VEXT*cos(t1)); 
-          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], -VEXT*sin(t2));
-          femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], VEXT*cos(t1)); 
+          femFullSystemConstrain(theSystem2, theEdges->edges[i].node[0], -VEXT*sin(t1));
+          femFullSystemConstrain(theSystem, theEdges->edges[i].node[1], VEXT*cos(t2)); 
           femFullSystemConstrain(theSystem2, theEdges->edges[i].node[1], -VEXT*sin(t2));
         }
     }
