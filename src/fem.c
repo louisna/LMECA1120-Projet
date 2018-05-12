@@ -443,7 +443,7 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
     theGrains->radiusOut = radiusOut;
     theGrains->gravity[0] =  0.0;
     theGrains->gravity[1] = -9.81;
-    theGrains->gamma = 2.0;
+    theGrains->gamma = 1.0;
     
        
     theGrains->x  = malloc(n*sizeof(double));
@@ -475,14 +475,17 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
 
 femIterativeSolver *femIterativeSolverCreate(int size)
 {
-    femIterativeSolver *mySolver = malloc(sizeof(femIterativeSolver));
-    mySolver->R = malloc(sizeof(double)*size*4);      
-    mySolver->D = mySolver->R + size;       
-    mySolver->S = mySolver->R + size*2;       
-    mySolver->X = mySolver->R + size*3;       
-    mySolver->size = size;
-    femIterativeSolverInit(mySolver);
-    return(mySolver);
+    femIterativeSolver *solver = malloc(sizeof(femIterativeSolver));
+    solver->R = malloc(sizeof(double)*size*4);      
+    solver->D = solver->R + size;       
+    solver->S = solver->R + size*2;       
+    solver->X = solver->R + size*3;       
+    solver->size = size;
+    solver->iter = 0;
+    solver->error = 10.0e+12;
+    for (int i=0 ; i < solver->size*4 ; i++) 
+        solver->R[i] = 0; 
+    return solver;
 }
 
 void femIterativeSolverFree(femIterativeSolver *mySolver)

@@ -106,57 +106,44 @@ void femIterativeSolverConstrain(femIterativeSolver* mySolver, int myNode, doubl
     mySolver->S[myNode] = myValue;
 }
 
-double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
+double *femIterativeSolverEliminate(femIterativeSolver *solver)
 {
-    mySolver->iter++;
-    double error = 0.0; int i;
-    for (i=0; i < mySolver->size; i++) {
-        error += (mySolver->R[i])*(mySolver->R[i]);
+    double *R = solver->R;
+    double *D = solver->D;
+    double *S = solver->S;
+    double *X = solver->X; 
+    int n = solver->size,i;
+
+    double error = 0;
+    for (i = 0; i < n; ++i)
+        error += R[i] * R[i];
+
+    if (solver->iter == 0)
+        for (i = 0; i < n; ++i) {
+            X[i] = 0;
+            D[i] = R[i];
+        }
+    else {   
+        double Ad = 0;
+        for (i = 0; i < n; ++i)
+            Ad += S[i] * R[i];
+        double alpha = - error / Ad;
+        for (i = 0; i < n; ++i)
+            X[i] += alpha * D[i];
+        for (i = 0; i < n; ++i)
+            R[i] += alpha * S[i];
+        double temp = 0;
+        for (i = 0; i < n; ++i)
+            temp += R[i] * R[i];
+        double beta = temp / error;
+        for (i = 0; i < n; ++i)
+            D[i] = beta * D[i] + R[i];
+        for (i = 0; i < n; ++i)
+            S[i] = 0;
     }
-
-    int taille = mySolver->size;
-    double *s = mySolver->S;
-    double *d = mySolver->D;
-    double *r = mySolver->R;
-    double *dx = mySolver->X;
-
-    if(mySolver->iter==1){
-        for(i=0;i<taille;i++){
-            d[i] = r[i];
-            dx[i] = 0;
-        }
-    }
-    else{
-        double da = 0.0;
-        for(i=0;i<taille;i++){
-            da += s[i]*r[i];
-        }
-        double alpha = -error/da;
-
-        for(i=0;i<taille;i++){
-            dx[i] += alpha*d[i]; //erreur peut-etre
-        }
-
-        for(i=0;i<taille;i++){
-            r[i] = r[i] + alpha*s[i];
-        }
-
-        double nb = 0.0;
-        for(i=0;i<taille;i++){
-            nb += r[i]*r[i];
-        }
-
-        double beta = nb/error;
-
-        for(i=0;i<taille;i++){
-            d[i] = r[i] + beta*d[i];
-            s[i] = 0.0;
-        }
-    }
-    mySolver->error = sqrt(error);
-
-
-    return mySolver->X;
+    solver->iter++;
+    solver->error = sqrt(error);
+    return solver->X;
 }
 
 # ifndef FEMCOUETTE
@@ -253,6 +240,20 @@ void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
 
 # endif
 
+void phi_c(double xsi,double eta,double *phi){
+  phi[0] = 1 - xsi - eta;
+  phi[1] = xsi;
+  phi[2] = eta;
+}
+
+void isomorphism(double X[3], double Y[3], double x[2], double *xsi) 
+{
+    double X1 = X[0], X2 = X[1], X3 = X[2];
+    double Y1 = Y[0], Y2 = Y[1], Y3 = Y[2];
+    xsi[0] = - (X1*Y3 - X3*Y1 - X1*x[1] + Y1*x[0] + X3*x[1] - Y3*x[0]) / (X1*Y2 - X2*Y1 - X1*Y3 + X3*Y1 + X2*Y3 - X3*Y2);
+    xsi[1] =   (X1*Y2 - X2*Y1 - X1*x[1] + Y1*x[0] + X2*x[1] - Y2*x[0]) / (X1*Y2 - X2*Y1 - X1*Y3 + X3*Y1 + X2*Y3 - X3*Y2);
+}
+
 
 # ifndef NOPOISSONSOLVE
 
@@ -276,11 +277,6 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;
   int map[4];
-  double U[theSystem2->size], U2[theSystem2->size];
-  for(i=0;i<theSystem2->size;i++){
-    U[i] = 0;
-    U2[i] = 0;
-  }
 
   for (i = 0; i < theMesh->nElem; i++)
   {
@@ -289,7 +285,7 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 
     int nSpace=theSpace->n;
 
-    for (j=0; j < theRule->n; j++)
+    for (j=0; j < 3; j++)
     {
       //valeurs d'integration
       double xsi    = theRule->xsi[j];
@@ -303,7 +299,7 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 
       //passage du plan xsi-eta au plan x-y
       double dxdxsi = 0, dxdeta = 0, dydxsi = 0, dydeta = 0 ;
-      for (k = 0; k < nSpace; k++)
+      for (k = 0; k < 3; k++)
       {
         dxdxsi = dxdxsi + x[k]*dphidxsi[k];  
         dxdeta = dxdeta + x[k]*dphideta[k];   
@@ -319,9 +315,9 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
         dphidx[k] = (dphidxsi[k] * dydeta - dphideta[k] * dydxsi) / J_e;
         dphidy[k] = (dphideta[k] * dxdxsi - dphidxsi[k] * dxdeta) / J_e;
       }
-      for (k = 0; k < nSpace; k++)
+      for (k = 0; k < 3; k++)
       {
-        for(l = 0; l < nSpace; l++)
+        for(l = 0; l < 3; l++)
         {
           double numIntegrateA = (dphidx[k] * dphidx[l] + dphidy[k] * dphidy[l]) * J_e * weight;
           theSystem->A[map[k]][map[l]] = theSystem->A[map[k]][map[l]] + mu*numIntegrateA;
@@ -336,24 +332,26 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
     }
   }
   int *elem = theGrains->elem;
+  double xx[2];
   double iso[2];
-
+  double myPhi[3];
   for(i=0;i<theGrains->n;i++){
     int myElem = elem[i];
-    femMeshLocal(theMesh,myElem,map,x,y);
-    isomorphisme(theGrains->x[i], theGrains->y[i], x, y, iso);
-    double phi1 = (1 - iso[0] - iso[1]);
-    double phi2 = iso[0];
-    double phi3 = iso[1];
-    double myPhi[3] = {phi1,phi2,phi3};
-    for(k=0;k<3;k++){
-      for(l=0;l<3;l++){
-        double grainsA = myPhi[k]*myPhi[l];
-        theSystem->A[map[k]][map[l]] += gamma*grainsA;
-        theSystem2->A[map[k]][map[l]] += gamma*grainsA;
+    if(myElem > 0){
+      xx[0] = theGrains->x[i];
+      xx[1] = theGrains->y[i];
+      femMeshLocal(theMesh,myElem,map,x,y);
+      isomorphism(x, y, xx, iso);
+      phi_c(iso[0], iso[1], myPhi);
+      for(k=0;k<3;k++){
+        for(l=0;l<3;l++){
+          double grainsA = myPhi[k]*myPhi[l];
+          theSystem->A[map[k]][map[l]] += gamma*grainsA;
+          theSystem2->A[map[k]][map[l]] += gamma*grainsA;
+        }
+        theSystem->B[map[k]] = gamma*myPhi[k]*theGrains->vx[i];
+        theSystem2->B[map[k]] = gamma*myPhi[k]*theGrains->vy[i];
       }
-      theSystem->B[map[k]] = gamma*myPhi[k]*theGrains->vx[i];
-      theSystem2->B[map[k]] = gamma*myPhi[k]*theGrains->vy[i];
     }
 
 
@@ -383,12 +381,12 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
     }
   }
 
-  //femCouetteSolve(theProblem);
+  femCouetteSolve(theProblem);
 
 
   //Resolution du systeme par elimination de Gauss
-  femFullSystemEliminate(theSystem);
-  femFullSystemEliminate(theSystem2);
+  //femFullSystemEliminate(theSystem);
+  //femFullSystemEliminate(theSystem2);
 }
 
 # endif
@@ -529,7 +527,7 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
         vy_loc = phi1*B2[map[0]] + phi2*B2[map[1]] + phi3*B2[map[2]];
       }
       //printf("Vitesses : %f \n", B[myGrains->elem[i]]);
-        double fx = m[i] * 0 - gamma * vx[i] + gamma * vx_loc;
+        double fx = m[i] * gx - gamma * vx[i] + gamma * vx_loc;
         double fy = m[i] * gy - gamma * vy[i] + gamma * vy_loc;
         vx[i] += fx * dt / m[i];
         vy[i] += fy * dt / m[i];  
