@@ -34,7 +34,7 @@ int main(void)
     printf("Number of unknowns    : %4d\n", theProblem->system->size);
 
     
-    femPoissonSolve(theProblem); 
+    //femPoissonSolve(theProblem); 
     //femFullSystemIterate(theProblem);
  
     printf("Maximum value : %.4f\n", femMax(theProblem->system->B,theProblem->system->size));
@@ -46,7 +46,7 @@ int main(void)
     GLFWwindow* window = glfemInit("MECA1120 : Projet EF ");
     glfwMakeContextCurrent(window);
     int theRunningMode = 1.0;
-    float theVelocityFactor = 0.25;
+    float theVelocityFactor = 0.1;
 
     do {
         int i,w,h;
