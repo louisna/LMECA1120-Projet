@@ -50,11 +50,11 @@ GL/glu.h
 vulkan/vulkan.h
 -
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.c
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.c
 fem.h
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.h
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.h
 stdio.h
 -
 stdlib.h
@@ -64,21 +64,21 @@ math.h
 string.h
 -
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.c
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.c
 glfem.h
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.h
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.h
 GLFW/glfw3.h
 -
 fem.h
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.h
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/homework.c
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/homework.c
 fem.h
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/fem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/fem.h
 
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/main.c
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/main.c
 glfem.h
-/home/nahijr/Documents/GitHub/LMECA1120-Projet/src/glfem.h
+/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/src/glfem.h
 

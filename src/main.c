@@ -50,6 +50,10 @@ int main(void)
     float theVelocityFactor = 0.1;
 
     femPoissonSolve(theProblem,theGrains);
+    int k;
+    for(k=0;k<theGrains->n;k++){
+        printf("Bille %d dans element %d\n", k, theGrains->elem[k]);
+    }
 
     do {
         int i,w,h;

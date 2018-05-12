@@ -198,6 +198,10 @@ void femCouetteSolve(femPoissonProblem *theProblem){
 
 void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_return){
   double x_iso, y_iso;
+  double X1 = x_loc[0], X2 = x_loc[1], X3 = x_loc[2];
+  double Y1 = y_loc[0], Y2 = y_loc[1], Y3 = y_loc[2];
+  //x_iso = -(X1*Y3 - X3*Y1 - X1*y + Y1*x + X3*y - Y3*x)/(X1*Y2 - X2*Y1 - X1*Y3 + X3*Y1 + X2*Y3 - X3*X2);
+  //y_iso =  (X1*Y2 - X2*Y1 - X1*y + Y1*x + X2*y - Y2*x)/(X1*Y2 - X2*Y1 - X1*Y3 + X3*Y1 + X2*Y3 - X3*X2);
   x_iso = -(x*y_loc[0] - x_loc[0]*y - x*y_loc[2] + x_loc[2]*y + x_loc[0]*y_loc[2] - x_loc[2]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
   y_iso =  (x*y_loc[0] - x_loc[0]*y - x*y_loc[1] + x_loc[1]*y + x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
 
@@ -205,12 +209,69 @@ void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_r
   to_return[1] = y_iso;
 }
 
+# ifndef FINDELEMENT
+
+double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
+  femMesh *theMesh = theProblem->mesh;
+  int n_g     = theGrains->n;
+  double ** smah = malloc(n_g*sizeof(double*));
+  int k;
+  for(k=0;k<n_g;k++){
+    smah[k] = malloc(2*sizeof(double));
+  }
+  int *elem_g = theGrains->elem;
+  double *x_g    = theGrains->x;
+  double *y_g    = theGrains->y;
+
+  double *X_m    = theMesh->X;
+  double *Y_m    = theMesh->Y;
+  int *elem_m = theMesh->elem;
+  int n_e     = theMesh->nElem;
+  double *B = theProblem->system->B;
+  double *B2 = theProblem->system2->B;
+
+  int i,j;
+  double x_elem[3];
+  double y_elem[3];
+  int map[2];
+  double iso[2];
+
+  for(i=0;i<n_g;i++){
+    double x_loc = x_g[i];
+    double y_loc = y_g[i];
+    int dedans = 0;
+
+    for(j=0;j<n_e && dedans == 0;j++){
+      femMeshLocal(theMesh, j, map, x_elem, y_elem);
+      isomorphisme(x_loc, y_loc, x_elem, y_elem, iso);
+
+      if(iso[0] <= 1 && iso[0] >= 0 && iso[1] <= 1 && iso[1] >= 0 && iso[1] + iso[0] <= 1){
+        dedans = 1;
+        elem_g[i] = j;
+        smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
+        smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
+      }
+    }
+    if(dedans == 0){
+      elem_g[i] = -1;
+      smah[i][0] = 0.0;
+      smah[i][1] = 0.0;
+    }
+
+  }
+  return smah;
+
+}
+
+# endif
+
+
 # ifndef NOPOISSONSOLVE
 
 
 void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 {
-
+  double **aaaa = findElement(theGrains, theProblem);
   int option = 1;
   femMesh *theMesh=theProblem->mesh;
   femEdges *theEdges=theProblem->edges;
@@ -345,62 +406,6 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 
 # endif
 
-# ifndef FINDELEMENT
-
-double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
-  femMesh *theMesh = theProblem->mesh;
-  int n_g     = theGrains->n;
-  double ** smah = malloc(n_g*sizeof(double*));
-  int k;
-  for(k=0;k<n_g;k++){
-    smah[k] = malloc(2*sizeof(double));
-  }
-  int *elem_g = theGrains->elem;
-  double *x_g    = theGrains->x;
-  double *y_g    = theGrains->y;
-
-  double *X_m    = theMesh->X;
-  double *Y_m    = theMesh->Y;
-  int *elem_m = theMesh->elem;
-  int n_e     = theMesh->nElem;
-  double *B = theProblem->system->B;
-  double *B2 = theProblem->system2->B;
-
-  int i,j;
-  double x_elem[3];
-  double y_elem[3];
-  int map[2];
-  double iso[2];
-
-  for(i=0;i<n_g;i++){
-    double x_loc = x_g[i];
-    double y_loc = y_g[i];
-    int dedans = 0;
-
-    for(j=0;j<n_e && dedans == 0;j++){
-      femMeshLocal(theMesh, j, map, x_elem, y_elem);
-      isomorphisme(x_loc, y_loc, x_elem, y_elem, iso);
-
-      if(iso[0] <= 1 && iso[0] >= 0 && iso[1] <= 1 && iso[1] >= 0 && iso[1] + iso[0] <= 1){
-        dedans = 1;
-        elem_g[i] = j;
-        smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
-        smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
-      }
-    }
-    if(dedans == 0){
-      elem_g[i] = -1;
-      smah[i][0] = 0.0;
-      smah[i][1] = 0.0;
-    }
-
-  }
-  return smah;
-
-}
-
-# endif
-
 # ifndef NOCONTACTITERATE
 
 double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)  
@@ -523,7 +528,13 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
         double fx = m[i] * 0 - gamma * vx[i] + gamma * smah[i][0];
         double fy = m[i] * gy - gamma * vy[i] + gamma * smah[i][1];
         vx[i] += fx * dt / m[i];
-        vy[i] += fy * dt / m[i];  }
+        vy[i] += fy * dt / m[i];  
+    }
+    int k;
+    for(k=0;k<n;k++){
+      free(smah[k]);
+    }
+    free(smah);
 
 //
 // -2- Correction des vitesses pour tenir compte des contacts        

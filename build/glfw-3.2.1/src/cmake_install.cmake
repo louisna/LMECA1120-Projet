@@ -1,4 +1,4 @@
-# Install script for directory: /home/nahijr/Documents/GitHub/LMECA1120-Projet/glfw-3.2.1/src
+# Install script for directory: /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/glfw-3.2.1/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -25,10 +25,5 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   else()
     set(CMAKE_INSTALL_COMPONENT)
   endif()
-endif()
-
-# Install shared libraries without execute permission?
-if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "1")
 endif()
 

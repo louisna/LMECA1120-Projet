@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/bin/cmake
+CMAKE_COMMAND = /Applications/CMake.app/Contents/bin/cmake
 
 # The command to remove a file.
-RM = /usr/bin/cmake -E remove -f
+RM = /Applications/CMake.app/Contents/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet
+CMAKE_SOURCE_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet/build
+CMAKE_BINARY_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet/build
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/Applications/CMake.app/Contents/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/Applications/CMake.app/Contents/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles /home/nahijr/Documents/GitHub/LMECA1120-Projet/build/glfw-3.2.1/src/CMakeFiles/progress.marks
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles 0
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_progress_start /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/glfw-3.2.1/src/CMakeFiles/progress.marks
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/clean
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/preinstall
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/preinstall
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 glfw-3.2.1/src/CMakeFiles/glfw.dir/rule:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/CMakeFiles/glfw.dir/rule
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f CMakeFiles/Makefile2 glfw-3.2.1/src/CMakeFiles/glfw.dir/rule
 .PHONY : glfw-3.2.1/src/CMakeFiles/glfw.dir/rule
 
 # Convenience name for target.
@@ -122,8 +122,143 @@ glfw: glfw-3.2.1/src/CMakeFiles/glfw.dir/rule
 
 # fast build rule for target.
 glfw/fast:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/build
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/build
 .PHONY : glfw/fast
+
+cocoa_init.o: cocoa_init.m.o
+
+.PHONY : cocoa_init.o
+
+# target to build an object file
+cocoa_init.m.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_init.m.o
+.PHONY : cocoa_init.m.o
+
+cocoa_init.i: cocoa_init.m.i
+
+.PHONY : cocoa_init.i
+
+# target to preprocess a source file
+cocoa_init.m.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_init.m.i
+.PHONY : cocoa_init.m.i
+
+cocoa_init.s: cocoa_init.m.s
+
+.PHONY : cocoa_init.s
+
+# target to generate assembly for a file
+cocoa_init.m.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_init.m.s
+.PHONY : cocoa_init.m.s
+
+cocoa_joystick.o: cocoa_joystick.m.o
+
+.PHONY : cocoa_joystick.o
+
+# target to build an object file
+cocoa_joystick.m.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_joystick.m.o
+.PHONY : cocoa_joystick.m.o
+
+cocoa_joystick.i: cocoa_joystick.m.i
+
+.PHONY : cocoa_joystick.i
+
+# target to preprocess a source file
+cocoa_joystick.m.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_joystick.m.i
+.PHONY : cocoa_joystick.m.i
+
+cocoa_joystick.s: cocoa_joystick.m.s
+
+.PHONY : cocoa_joystick.s
+
+# target to generate assembly for a file
+cocoa_joystick.m.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_joystick.m.s
+.PHONY : cocoa_joystick.m.s
+
+cocoa_monitor.o: cocoa_monitor.m.o
+
+.PHONY : cocoa_monitor.o
+
+# target to build an object file
+cocoa_monitor.m.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_monitor.m.o
+.PHONY : cocoa_monitor.m.o
+
+cocoa_monitor.i: cocoa_monitor.m.i
+
+.PHONY : cocoa_monitor.i
+
+# target to preprocess a source file
+cocoa_monitor.m.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_monitor.m.i
+.PHONY : cocoa_monitor.m.i
+
+cocoa_monitor.s: cocoa_monitor.m.s
+
+.PHONY : cocoa_monitor.s
+
+# target to generate assembly for a file
+cocoa_monitor.m.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_monitor.m.s
+.PHONY : cocoa_monitor.m.s
+
+cocoa_time.o: cocoa_time.c.o
+
+.PHONY : cocoa_time.o
+
+# target to build an object file
+cocoa_time.c.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_time.c.o
+.PHONY : cocoa_time.c.o
+
+cocoa_time.i: cocoa_time.c.i
+
+.PHONY : cocoa_time.i
+
+# target to preprocess a source file
+cocoa_time.c.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_time.c.i
+.PHONY : cocoa_time.c.i
+
+cocoa_time.s: cocoa_time.c.s
+
+.PHONY : cocoa_time.s
+
+# target to generate assembly for a file
+cocoa_time.c.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_time.c.s
+.PHONY : cocoa_time.c.s
+
+cocoa_window.o: cocoa_window.m.o
+
+.PHONY : cocoa_window.o
+
+# target to build an object file
+cocoa_window.m.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_window.m.o
+.PHONY : cocoa_window.m.o
+
+cocoa_window.i: cocoa_window.m.i
+
+.PHONY : cocoa_window.i
+
+# target to preprocess a source file
+cocoa_window.m.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_window.m.i
+.PHONY : cocoa_window.m.i
+
+cocoa_window.s: cocoa_window.m.s
+
+.PHONY : cocoa_window.s
+
+# target to generate assembly for a file
+cocoa_window.m.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/cocoa_window.m.s
+.PHONY : cocoa_window.m.s
 
 context.o: context.c.o
 
@@ -131,7 +266,7 @@ context.o: context.c.o
 
 # target to build an object file
 context.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.o
 .PHONY : context.c.o
 
 context.i: context.c.i
@@ -140,7 +275,7 @@ context.i: context.c.i
 
 # target to preprocess a source file
 context.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.i
 .PHONY : context.c.i
 
 context.s: context.c.s
@@ -149,7 +284,7 @@ context.s: context.c.s
 
 # target to generate assembly for a file
 context.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/context.c.s
 .PHONY : context.c.s
 
 egl_context.o: egl_context.c.o
@@ -158,7 +293,7 @@ egl_context.o: egl_context.c.o
 
 # target to build an object file
 egl_context.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.o
 .PHONY : egl_context.c.o
 
 egl_context.i: egl_context.c.i
@@ -167,7 +302,7 @@ egl_context.i: egl_context.c.i
 
 # target to preprocess a source file
 egl_context.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.i
 .PHONY : egl_context.c.i
 
 egl_context.s: egl_context.c.s
@@ -176,35 +311,8 @@ egl_context.s: egl_context.c.s
 
 # target to generate assembly for a file
 egl_context.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/egl_context.c.s
 .PHONY : egl_context.c.s
-
-glx_context.o: glx_context.c.o
-
-.PHONY : glx_context.o
-
-# target to build an object file
-glx_context.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/glx_context.c.o
-.PHONY : glx_context.c.o
-
-glx_context.i: glx_context.c.i
-
-.PHONY : glx_context.i
-
-# target to preprocess a source file
-glx_context.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/glx_context.c.i
-.PHONY : glx_context.c.i
-
-glx_context.s: glx_context.c.s
-
-.PHONY : glx_context.s
-
-# target to generate assembly for a file
-glx_context.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/glx_context.c.s
-.PHONY : glx_context.c.s
 
 init.o: init.c.o
 
@@ -212,7 +320,7 @@ init.o: init.c.o
 
 # target to build an object file
 init.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.o
 .PHONY : init.c.o
 
 init.i: init.c.i
@@ -221,7 +329,7 @@ init.i: init.c.i
 
 # target to preprocess a source file
 init.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.i
 .PHONY : init.c.i
 
 init.s: init.c.s
@@ -230,7 +338,7 @@ init.s: init.c.s
 
 # target to generate assembly for a file
 init.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/init.c.s
 .PHONY : init.c.s
 
 input.o: input.c.o
@@ -239,7 +347,7 @@ input.o: input.c.o
 
 # target to build an object file
 input.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.o
 .PHONY : input.c.o
 
 input.i: input.c.i
@@ -248,7 +356,7 @@ input.i: input.c.i
 
 # target to preprocess a source file
 input.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.i
 .PHONY : input.c.i
 
 input.s: input.c.s
@@ -257,35 +365,8 @@ input.s: input.c.s
 
 # target to generate assembly for a file
 input.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/input.c.s
 .PHONY : input.c.s
-
-linux_joystick.o: linux_joystick.c.o
-
-.PHONY : linux_joystick.o
-
-# target to build an object file
-linux_joystick.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/linux_joystick.c.o
-.PHONY : linux_joystick.c.o
-
-linux_joystick.i: linux_joystick.c.i
-
-.PHONY : linux_joystick.i
-
-# target to preprocess a source file
-linux_joystick.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/linux_joystick.c.i
-.PHONY : linux_joystick.c.i
-
-linux_joystick.s: linux_joystick.c.s
-
-.PHONY : linux_joystick.s
-
-# target to generate assembly for a file
-linux_joystick.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/linux_joystick.c.s
-.PHONY : linux_joystick.c.s
 
 monitor.o: monitor.c.o
 
@@ -293,7 +374,7 @@ monitor.o: monitor.c.o
 
 # target to build an object file
 monitor.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.o
 .PHONY : monitor.c.o
 
 monitor.i: monitor.c.i
@@ -302,7 +383,7 @@ monitor.i: monitor.c.i
 
 # target to preprocess a source file
 monitor.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.i
 .PHONY : monitor.c.i
 
 monitor.s: monitor.c.s
@@ -311,8 +392,35 @@ monitor.s: monitor.c.s
 
 # target to generate assembly for a file
 monitor.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/monitor.c.s
 .PHONY : monitor.c.s
+
+nsgl_context.o: nsgl_context.m.o
+
+.PHONY : nsgl_context.o
+
+# target to build an object file
+nsgl_context.m.o:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/nsgl_context.m.o
+.PHONY : nsgl_context.m.o
+
+nsgl_context.i: nsgl_context.m.i
+
+.PHONY : nsgl_context.i
+
+# target to preprocess a source file
+nsgl_context.m.i:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/nsgl_context.m.i
+.PHONY : nsgl_context.m.i
+
+nsgl_context.s: nsgl_context.m.s
+
+.PHONY : nsgl_context.s
+
+# target to generate assembly for a file
+nsgl_context.m.s:
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/nsgl_context.m.s
+.PHONY : nsgl_context.m.s
 
 osmesa_context.o: osmesa_context.c.o
 
@@ -320,7 +428,7 @@ osmesa_context.o: osmesa_context.c.o
 
 # target to build an object file
 osmesa_context.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.o
 .PHONY : osmesa_context.c.o
 
 osmesa_context.i: osmesa_context.c.i
@@ -329,7 +437,7 @@ osmesa_context.i: osmesa_context.c.i
 
 # target to preprocess a source file
 osmesa_context.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.i
 .PHONY : osmesa_context.c.i
 
 osmesa_context.s: osmesa_context.c.s
@@ -338,7 +446,7 @@ osmesa_context.s: osmesa_context.c.s
 
 # target to generate assembly for a file
 osmesa_context.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/osmesa_context.c.s
 .PHONY : osmesa_context.c.s
 
 posix_thread.o: posix_thread.c.o
@@ -347,7 +455,7 @@ posix_thread.o: posix_thread.c.o
 
 # target to build an object file
 posix_thread.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.o
 .PHONY : posix_thread.c.o
 
 posix_thread.i: posix_thread.c.i
@@ -356,7 +464,7 @@ posix_thread.i: posix_thread.c.i
 
 # target to preprocess a source file
 posix_thread.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.i
 .PHONY : posix_thread.c.i
 
 posix_thread.s: posix_thread.c.s
@@ -365,35 +473,8 @@ posix_thread.s: posix_thread.c.s
 
 # target to generate assembly for a file
 posix_thread.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_thread.c.s
 .PHONY : posix_thread.c.s
-
-posix_time.o: posix_time.c.o
-
-.PHONY : posix_time.o
-
-# target to build an object file
-posix_time.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_time.c.o
-.PHONY : posix_time.c.o
-
-posix_time.i: posix_time.c.i
-
-.PHONY : posix_time.i
-
-# target to preprocess a source file
-posix_time.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_time.c.i
-.PHONY : posix_time.c.i
-
-posix_time.s: posix_time.c.s
-
-.PHONY : posix_time.s
-
-# target to generate assembly for a file
-posix_time.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/posix_time.c.s
-.PHONY : posix_time.c.s
 
 vulkan.o: vulkan.c.o
 
@@ -401,7 +482,7 @@ vulkan.o: vulkan.c.o
 
 # target to build an object file
 vulkan.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.o
 .PHONY : vulkan.c.o
 
 vulkan.i: vulkan.c.i
@@ -410,7 +491,7 @@ vulkan.i: vulkan.c.i
 
 # target to preprocess a source file
 vulkan.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.i
 .PHONY : vulkan.c.i
 
 vulkan.s: vulkan.c.s
@@ -419,7 +500,7 @@ vulkan.s: vulkan.c.s
 
 # target to generate assembly for a file
 vulkan.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/vulkan.c.s
 .PHONY : vulkan.c.s
 
 window.o: window.c.o
@@ -428,7 +509,7 @@ window.o: window.c.o
 
 # target to build an object file
 window.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.o
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.o
 .PHONY : window.c.o
 
 window.i: window.c.i
@@ -437,7 +518,7 @@ window.i: window.c.i
 
 # target to preprocess a source file
 window.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.i
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.i
 .PHONY : window.c.i
 
 window.s: window.c.s
@@ -446,116 +527,8 @@ window.s: window.c.s
 
 # target to generate assembly for a file
 window.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.s
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/window.c.s
 .PHONY : window.c.s
-
-x11_init.o: x11_init.c.o
-
-.PHONY : x11_init.o
-
-# target to build an object file
-x11_init.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_init.c.o
-.PHONY : x11_init.c.o
-
-x11_init.i: x11_init.c.i
-
-.PHONY : x11_init.i
-
-# target to preprocess a source file
-x11_init.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_init.c.i
-.PHONY : x11_init.c.i
-
-x11_init.s: x11_init.c.s
-
-.PHONY : x11_init.s
-
-# target to generate assembly for a file
-x11_init.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_init.c.s
-.PHONY : x11_init.c.s
-
-x11_monitor.o: x11_monitor.c.o
-
-.PHONY : x11_monitor.o
-
-# target to build an object file
-x11_monitor.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_monitor.c.o
-.PHONY : x11_monitor.c.o
-
-x11_monitor.i: x11_monitor.c.i
-
-.PHONY : x11_monitor.i
-
-# target to preprocess a source file
-x11_monitor.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_monitor.c.i
-.PHONY : x11_monitor.c.i
-
-x11_monitor.s: x11_monitor.c.s
-
-.PHONY : x11_monitor.s
-
-# target to generate assembly for a file
-x11_monitor.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_monitor.c.s
-.PHONY : x11_monitor.c.s
-
-x11_window.o: x11_window.c.o
-
-.PHONY : x11_window.o
-
-# target to build an object file
-x11_window.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_window.c.o
-.PHONY : x11_window.c.o
-
-x11_window.i: x11_window.c.i
-
-.PHONY : x11_window.i
-
-# target to preprocess a source file
-x11_window.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_window.c.i
-.PHONY : x11_window.c.i
-
-x11_window.s: x11_window.c.s
-
-.PHONY : x11_window.s
-
-# target to generate assembly for a file
-x11_window.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/x11_window.c.s
-.PHONY : x11_window.c.s
-
-xkb_unicode.o: xkb_unicode.c.o
-
-.PHONY : xkb_unicode.o
-
-# target to build an object file
-xkb_unicode.c.o:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/xkb_unicode.c.o
-.PHONY : xkb_unicode.c.o
-
-xkb_unicode.i: xkb_unicode.c.i
-
-.PHONY : xkb_unicode.i
-
-# target to preprocess a source file
-xkb_unicode.c.i:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/xkb_unicode.c.i
-.PHONY : xkb_unicode.c.i
-
-xkb_unicode.s: xkb_unicode.c.s
-
-.PHONY : xkb_unicode.s
-
-# target to generate assembly for a file
-xkb_unicode.c.s:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(MAKE) -f glfw-3.2.1/src/CMakeFiles/glfw.dir/build.make glfw-3.2.1/src/CMakeFiles/glfw.dir/xkb_unicode.c.s
-.PHONY : xkb_unicode.c.s
 
 # Help Target
 help:
@@ -564,56 +537,53 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... glfw"
 	@echo "... edit_cache"
+	@echo "... glfw"
+	@echo "... cocoa_init.o"
+	@echo "... cocoa_init.i"
+	@echo "... cocoa_init.s"
+	@echo "... cocoa_joystick.o"
+	@echo "... cocoa_joystick.i"
+	@echo "... cocoa_joystick.s"
+	@echo "... cocoa_monitor.o"
+	@echo "... cocoa_monitor.i"
+	@echo "... cocoa_monitor.s"
+	@echo "... cocoa_time.o"
+	@echo "... cocoa_time.i"
+	@echo "... cocoa_time.s"
+	@echo "... cocoa_window.o"
+	@echo "... cocoa_window.i"
+	@echo "... cocoa_window.s"
 	@echo "... context.o"
 	@echo "... context.i"
 	@echo "... context.s"
 	@echo "... egl_context.o"
 	@echo "... egl_context.i"
 	@echo "... egl_context.s"
-	@echo "... glx_context.o"
-	@echo "... glx_context.i"
-	@echo "... glx_context.s"
 	@echo "... init.o"
 	@echo "... init.i"
 	@echo "... init.s"
 	@echo "... input.o"
 	@echo "... input.i"
 	@echo "... input.s"
-	@echo "... linux_joystick.o"
-	@echo "... linux_joystick.i"
-	@echo "... linux_joystick.s"
 	@echo "... monitor.o"
 	@echo "... monitor.i"
 	@echo "... monitor.s"
+	@echo "... nsgl_context.o"
+	@echo "... nsgl_context.i"
+	@echo "... nsgl_context.s"
 	@echo "... osmesa_context.o"
 	@echo "... osmesa_context.i"
 	@echo "... osmesa_context.s"
 	@echo "... posix_thread.o"
 	@echo "... posix_thread.i"
 	@echo "... posix_thread.s"
-	@echo "... posix_time.o"
-	@echo "... posix_time.i"
-	@echo "... posix_time.s"
 	@echo "... vulkan.o"
 	@echo "... vulkan.i"
 	@echo "... vulkan.s"
 	@echo "... window.o"
 	@echo "... window.i"
 	@echo "... window.s"
-	@echo "... x11_init.o"
-	@echo "... x11_init.i"
-	@echo "... x11_init.s"
-	@echo "... x11_monitor.o"
-	@echo "... x11_monitor.i"
-	@echo "... x11_monitor.s"
-	@echo "... x11_window.o"
-	@echo "... x11_window.i"
-	@echo "... x11_window.s"
-	@echo "... xkb_unicode.o"
-	@echo "... xkb_unicode.i"
-	@echo "... xkb_unicode.s"
 .PHONY : help
 
 
@@ -625,6 +595,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

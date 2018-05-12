@@ -34,19 +34,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/bin/cmake
+CMAKE_COMMAND = /Applications/CMake.app/Contents/bin/cmake
 
 # The command to remove a file.
-RM = /usr/bin/cmake -E remove -f
+RM = /Applications/CMake.app/Contents/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet
+CMAKE_SOURCE_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet/build
+CMAKE_BINARY_DIR = /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build
 
 # Utility rule file for run.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/nahijr/Documents/GitHub/LMECA1120-Projet/build
 include CMakeFiles/run.dir/progress.make
 
 CMakeFiles/run: myFem
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) ./myFem
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) ./myFem
 	./myFem
 
 run: CMakeFiles/run
@@ -72,6 +72,6 @@ CMakeFiles/run.dir/clean:
 .PHONY : CMakeFiles/run.dir/clean
 
 CMakeFiles/run.dir/depend:
-	cd /home/nahijr/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nahijr/Documents/GitHub/LMECA1120-Projet /home/nahijr/Documents/GitHub/LMECA1120-Projet /home/nahijr/Documents/GitHub/LMECA1120-Projet/build /home/nahijr/Documents/GitHub/LMECA1120-Projet/build /home/nahijr/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles/run.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build /Users/louisnavarre/Documents/GitHub/LMECA1120-Projet/build/CMakeFiles/run.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run.dir/depend
 
