@@ -211,14 +211,10 @@ void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_r
 
 # ifndef FINDELEMENT
 
-double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
+void findElement(femGrains *theGrains, femPoissonProblem *theProblem){
   femMesh *theMesh = theProblem->mesh;
   int n_g     = theGrains->n;
-  double ** smah = malloc(n_g*sizeof(double*));
   int k;
-  for(k=0;k<n_g;k++){
-    smah[k] = malloc(2*sizeof(double));
-  }
   int *elem_g = theGrains->elem;
   double *x_g    = theGrains->x;
   double *y_g    = theGrains->y;
@@ -233,7 +229,7 @@ double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
   int i,j;
   double x_elem[3];
   double y_elem[3];
-  int map[2];
+  int map[3];
   double iso[2];
 
   for(i=0;i<n_g;i++){
@@ -248,18 +244,10 @@ double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
       if(iso[0] <= 1 && iso[0] >= 0 && iso[1] <= 1 && iso[1] >= 0 && iso[1] + iso[0] <= 1){
         dedans = 1;
         elem_g[i] = j;
-        smah[i][0] = (1 - iso[0] - iso[1])*B[map[0]] + iso[0]*B[map[1]] + iso[1]*B[map[2]];
-        smah[i][1] = (1 - iso[0] - iso[1])*B2[map[0]] + iso[0]*B2[map[1]] + iso[1]*B2[map[2]];
       }
-    }
-    if(dedans == 0){
-      elem_g[i] = -1;
-      smah[i][0] = 0.0;
-      smah[i][1] = 0.0;
     }
 
   }
-  return smah;
 
 }
 
@@ -271,7 +259,7 @@ double** findElement(femGrains *theGrains, femPoissonProblem *theProblem){
 
 void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 {
-  double **aaaa = findElement(theGrains, theProblem);
+  findElement(theGrains, theProblem);
   int option = 1;
   femMesh *theMesh=theProblem->mesh;
   femEdges *theEdges=theProblem->edges;
@@ -347,7 +335,6 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
       }
     }
   }
-
   int *elem = theGrains->elem;
   double iso[2];
 
@@ -517,24 +504,36 @@ void femGrainsUpdate(femPoissonProblem *theProblem, femGrains *myGrains, double 
 // 
 // -1- Calcul des nouvelles vitesses des grains sur base de la gravit� et de la trainee
 //
-    double **smah =findElement(myGrains, theProblem);
+    findElement(myGrains, theProblem);
+    int elem,map[3];
+    double xloc[3],yloc[3];
+    double vx_loc;
+    double vy_loc;
+    double iso[2];
 
     for(i = 0; i < n; i++) {
-      if(myGrains->elem[i] != -1){
-        int elem_x = B[myGrains->elem[i]];
-        int elem_y = B2[myGrains->elem[i]];
+      elem = myGrains->elem[i];
+      if(elem == -1){
+        vx_loc = 0.0; vy_loc = 0.0;
+      }
+      else{
+        femMeshLocal(theProblem->mesh, elem, map, xloc, yloc);
+        isomorphisme(myGrains->x[i], myGrains->y[i], xloc, yloc, iso);
+        vx_loc = 0;
+        vy_loc = 0;
+        double phi1 = 1 - iso[0] - iso[1];
+        double phi2 = iso[0];
+        double phi3 = iso[1];
+        int j;
+        vx_loc = phi1*B[map[0]] + phi2*B[map[1]] + phi3*B[map[2]];
+        vy_loc = phi1*B2[map[0]] + phi2*B2[map[1]] + phi3*B2[map[2]];
       }
       //printf("Vitesses : %f \n", B[myGrains->elem[i]]);
-        double fx = m[i] * 0 - gamma * vx[i] + gamma * smah[i][0];
-        double fy = m[i] * gy - gamma * vy[i] + gamma * smah[i][1];
+        double fx = m[i] * 0 - gamma * vx[i] + gamma * vx_loc;
+        double fy = m[i] * gy - gamma * vy[i] + gamma * vy_loc;
         vx[i] += fx * dt / m[i];
         vy[i] += fy * dt / m[i];  
     }
-    int k;
-    for(k=0;k<n;k++){
-      free(smah[k]);
-    }
-    free(smah);
 
 //
 // -2- Correction des vitesses pour tenir compte des contacts        

@@ -13,7 +13,7 @@
 
 int main(void)
 {   
-    int    n = 45;
+    int    n = 25;
     double radius    = 0.07;
     double mass      = 0.052;
     double radiusIn  = 0.4;
@@ -37,23 +37,23 @@ int main(void)
     
     //femPoissonSolve(theProblem); 
     //femFullSystemIterate(theProblem);
+    femPoissonSolve(theProblem,theGrains);
+    int k;
+    for(k=0;k<theGrains->n;k++){
+        printf("Bille %d dans element %d\n", k, theGrains->elem[k]);
+    }
  
     printf("Maximum value : %.4f\n", femMax(theProblem->system->B,theProblem->system->size));
     fflush(stdout);
     
     char theMessage[256];
     sprintf(theMessage, "Max : %.4f", femMax(theProblem->system->B,theProblem->system->size));
+
     
     GLFWwindow* window = glfemInit("MECA1120 : Projet EF ");
     glfwMakeContextCurrent(window);
     int theRunningMode = 1.0;
     float theVelocityFactor = 0.1;
-
-    femPoissonSolve(theProblem,theGrains);
-    int k;
-    for(k=0;k<theGrains->n;k++){
-        printf("Bille %d dans element %d\n", k, theGrains->elem[k]);
-    }
 
     do {
         int i,w,h;
