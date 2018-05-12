@@ -196,6 +196,14 @@ void femCouetteSolve(femPoissonProblem *theProblem){
 
 #endif
 
+void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_return){
+  double x_iso, y_iso;
+  x_iso = -(x*y_loc[0] - x_loc[0]*y - x*y_loc[2] + x_loc[2]*y + x_loc[0]*y_loc[2] - x_loc[2]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
+  y_iso =  (x*y_loc[0] - x_loc[0]*y - x*y_loc[1] + x_loc[1]*y + x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
+
+  to_return[0] = x_iso;
+  to_return[1] = y_iso;
+}
 
 # ifndef NOPOISSONSOLVE
 
@@ -214,6 +222,7 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
   double condHomo = 0.0;
   int condition = 0;
   int condition2 = 0;
+  double gamma = theGrains->gamma;
 
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;
@@ -267,7 +276,7 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
         {
           double numIntegrateA = (dphidx[k] * dphidx[l] + dphidy[k] * dphidy[l]) * J_e * weight;
           theSystem->A[map[k]][map[l]] = theSystem->A[map[k]][map[l]] + mu*numIntegrateA;
-          theSystem2->A[map[k]][map[l]] = theSystem2->A[map[k]][map[l]] + mu*numIntegrateA;;
+          theSystem2->A[map[k]][map[l]] = theSystem2->A[map[k]][map[l]] + mu*numIntegrateA;
         }
       }
       for (k = 0; k < nSpace; k++) {
@@ -277,6 +286,31 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
       }
     }
   }
+
+  int *elem = theGrains->elem;
+  double iso[2];
+
+  for(i=0;i<theGrains->n;i++){
+    int myElem = elem[i];
+    femMeshLocal(theMesh,myElem,map,x,y);
+    isomorphisme(theGrains->x[i], theGrains->y[i], x, y, iso);
+    double phi1 = (1 - iso[0] - iso[1]);
+    double phi2 = iso[0];
+    double phi3 = iso[1];
+    double myPhi[3] = {phi1,phi2,phi3};
+    for(k=0;k<3;k++){
+      for(l=0;l<3;l++){
+        double grainsA = myPhi[k]*myPhi[l];
+        theSystem->A[map[k]][map[l]] += gamma*grainsA;
+        theSystem2->A[map[k]][map[l]] += gamma*grainsA;
+      }
+      theSystem->B[map[k]] += gamma*myPhi[k]*theGrains->vy[i];
+      theSystem2->B[map[k]] += gamma*myPhi[k]*theGrains->vx[i];
+    }
+
+
+  }
+
   int done = 0;
   for(i=0;i<theEdges->nEdge && !done;i++){
     if(theEdges->edges[i].elem[1] == -1){
@@ -310,15 +344,6 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
 }
 
 # endif
-
-void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_return){
-  double x_iso, y_iso;
-  x_iso = -(x*y_loc[0] - x_loc[0]*y - x*y_loc[2] + x_loc[2]*y + x_loc[0]*y_loc[2] - x_loc[2]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
-  y_iso =  (x*y_loc[0] - x_loc[0]*y - x*y_loc[1] + x_loc[1]*y + x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0])/(x_loc[0]*y_loc[1] - x_loc[1]*y_loc[0] - x_loc[0]*y_loc[2] + x_loc[2]*y_loc[0] + x_loc[1]*y_loc[2] - x_loc[2]*y_loc[1]);
-
-  to_return[0] = x_iso;
-  to_return[1] = y_iso;
-}
 
 # ifndef FINDELEMENT
 

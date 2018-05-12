@@ -26,6 +26,7 @@ int main(void)
     femGrains* theGrains = femGrainsCreateSimple(n,radius,mass,radiusIn,radiusOut);
    
     femPoissonProblem* theProblem = femPoissonCreate("../data/meshMedium.txt");
+    double Bfin[theProblem->system->size];
     
      
     printf("Number of elements    : %4d\n", theProblem->mesh->nElem);
@@ -48,12 +49,17 @@ int main(void)
     int theRunningMode = 1.0;
     float theVelocityFactor = 0.1;
 
+    femPoissonSolve(theProblem,theGrains);
+
     do {
         int i,w,h;
         double currentTime = glfwGetTime();
 
         glfwGetFramebufferSize(window,&w,&h);
         glfemReshapeWindows(theProblem->mesh,w,h);
+        for(i=0;i<theProblem->system->size;i++){
+            theProblem->system->B[i] = sqrt(theProblem->system->B[i] * theProblem->system->B[i] + theProblem->system2->B[i] * theProblem->system2->B[i]);
+        }
 
         glfemPlotField(theProblem->mesh,theProblem->system->B);
         glColor3f(1.0,0.0,0.0); glfemDrawMessage(20,460,theMessage);
