@@ -323,9 +323,6 @@ void femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains)
           theSystem->A[map[k]][map[l]] = theSystem->A[map[k]][map[l]] + mu*numIntegrateA;
           theSystem2->A[map[k]][map[l]] = theSystem2->A[map[k]][map[l]] + mu*numIntegrateA;
         }
-      }
-      for (k = 0; k < nSpace; k++) {
-        double numIntegrateB = phi[k] * J_e * weight * termIndep;
         theSystem->B[map[k]] = 0;
         theSystem2->B[map[k]] = 0;
       }

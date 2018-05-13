@@ -25,7 +25,7 @@ int main(void)
     double iterMax = 100;
     femGrains* theGrains = femGrainsCreateSimple(n,radius,mass,radiusIn,radiusOut);
    
-    femPoissonProblem* theProblem = femPoissonCreate("../data/meshMedium.txt");
+    femPoissonProblem* theProblem = femPoissonCreate("../data/meshBig.txt");
     double Bfin[theProblem->system->size];
     
      
