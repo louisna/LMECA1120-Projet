@@ -4,11 +4,9 @@
 Louis NAVARRE : 1235-16-00
 Nahi NASSAR : 1269-16-00
 
-Le devoir s'est base en grande partie sur les slides du CM4 (28/2/18).
-La structure de femPoissonSolve a été par le professeur au CM5 (7/3/18).
-Une ressemblance avec une solution anterieure est possible mais on ne s'est pas base dessus.
+Projet FEM 2018
 */
-#define VEXT 3.0
+#define VEXT 7.0
 
 
 # ifndef NOCOUETTECREATE
@@ -24,6 +22,7 @@ femCouetteProblem *femCouetteCreate(const char *filename, femGrains *grains)
     theProblem->system2           = femFullSystemCreate(theProblem->mesh->nNode);
     theProblem->mu                = 1.0;
     theProblem->grains            = grains;
+    theProblem->norm              = malloc(sizeof(double)*theProblem->system->size);
     return theProblem;
 }
 
@@ -64,36 +63,34 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
 
 void femIterativeSolverAssemble(femIterativeSolver* mySolver, femFullSystem *theSystem)
 {
-    int i,j;
+    int i,j,myRow;
     double **A = theSystem->A;
     double *B  = theSystem->B;
     double *s  = mySolver->S;
     double *d  = mySolver->D;
     double *r  = mySolver->R;
-    int myRow;
-    int iter = mySolver->iter;
+    int iter   = mySolver->iter;
     /* 
     * On ne calcule R qu'a la premiere iteration, car r(k+1) est
     * calcule a chaque iteration
-    */
-    if(iter == 0){
-      for(i = 0; i < mySolver->size ; i++){
-        for(j = 0; j < mySolver->size; j++){
-          r[i] += A[i][j] * mySolver->X[j];
-        }
-        r[i] -= B[i];
-      }
-    }
-    /*
     * S, lui, doit etre calcule a chaque iteration car la direction
     * d change a chaque iteration
     */
-    for(i = 0; i < mySolver->size; i++){
-      for(j = 0; j < mySolver->size; j++){
+    for (i = 0; i < mySolver->size; ++i)
+    {
+      for (j = 0; j < mySolver->size; ++j)
+      {
+        if (iter == 0)
+        {
+          r[i] += A[i][j] * mySolver->X[j];
+        }
         s[i] += A[i][j] * d[j];
       }
+      if (iter == 0)
+      {
+        r[i] -= B[i];
+      }
     }
-    
 }
 
 void femIterativeSolverConstrain(femIterativeSolver* mySolver, int myNode, double myValue) 
@@ -118,7 +115,7 @@ double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
 
     if(mySolver->iter == 1){
         for(i=0;i<taille;i++){
-            d[i] = r[i];
+            d[i]  = r[i];
             dx[i] = 0;
         }
     }
@@ -127,30 +124,22 @@ double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
         for(i = 0; i < taille; i++){
             da += s[i]*r[i];
         }
+
         double alpha = -error / da;
-
-        for(i = 0; i < taille; i++){
-            dx[i] += alpha*d[i]; //erreur peut-etre
-        }
-
-        for(i = 0; i < taille; i++){
-            r[i] = r[i] + alpha * s[i];
-        }
-
         double nb = 0.0;
         for(i = 0; i < taille; i++){
-            nb += r[i] * r[i];
+            dx[i] += alpha*d[i];
+            r[i]   = r[i] + alpha * s[i];
+            nb    += r[i] * r[i];
         }
 
         double beta = nb / error;
-
         for(i = 0; i < taille; i++){
             d[i] = r[i] + beta * d[i];
             s[i] = 0.0;
         }
     }
     mySolver->error = sqrt(error);
-
 
     return mySolver->X;
 }
@@ -161,31 +150,30 @@ void femCouetteSolve(femCouetteProblem *theProblem){
   femIterativeSolver *theSolver  = femIterativeSolverCreate(theProblem->system->size);
   femIterativeSolver *theSolver2 = femIterativeSolverCreate(theProblem->system2->size);
 
-  int testconvergence = 0;
+  int testconvergence = 0, testconvergence2 = 0;
+
   do{
     femIterativeSolverAssemble(theSolver, theProblem->system);
     femIterativeSolverEliminate(theSolver);
-    testconvergence = femIterativeSolverConverged(theSolver);
-  }while(testconvergence == 0);
-  if(testconvergence == -1){
+
+    femIterativeSolverAssemble(theSolver2, theProblem->system2);
+    femIterativeSolverEliminate(theSolver2);
+
+    testconvergence  = femIterativeSolverConverged(theSolver);
+    testconvergence2 = femIterativeSolverConverged(theSolver2);
+  }while(testconvergence == 0 && testconvergence2 == 0);
+
+  if(testconvergence == -1 || testconvergence == -1){
     printf("Trop d'iterations\n");
     exit(EXIT_FAILURE);
   }
+
   for(int i=0; i<theSolver->size;i++){
-    theProblem->system->B[i] = theSolver->X[i];
-  }
-  do{
-    femIterativeSolverAssemble(theSolver2, theProblem->system2);
-    femIterativeSolverEliminate(theSolver2);
-    testconvergence = femIterativeSolverConverged(theSolver2);
-  }while(testconvergence == 0);
-  if(testconvergence == -1){
-    printf("Trop d'iterations 2\n");
-    exit(EXIT_FAILURE);
-  }
-  for(int i=0; i<theSolver->size;i++){
+    theProblem->system->B[i]  = theSolver->X[i];
     theProblem->system2->B[i] = theSolver2->X[i];
+    theProblem->norm[i]       = sqrt(theProblem->system->B[i]*theProblem->system->B[i] + theProblem->system2->B[i]*theProblem->system2->B[i]);
   }
+
   free(theSolver);
   free(theSolver2);
 }
@@ -221,8 +209,7 @@ void findElement(femCouetteProblem *theProblem){
   double *B2           = theProblem->system2->B;
 
   int i,j;
-  double x_elem[3];
-  double y_elem[3];
+  double x_elem[3], y_elem[3];
   int map[3];
   double iso[2];
 
@@ -306,6 +293,7 @@ void femCouetteAssemble(femCouetteProblem *theProblem)
         dphidx[k] = (dphidxsi[k] * dydeta - dphideta[k] * dydxsi) / J_e;
         dphidy[k] = (dphideta[k] * dxdxsi - dphidxsi[k] * dxdeta) / J_e;
       }
+
       for (k = 0; k < 3; k++)
       {
         for(l = 0; l < 3; l++)
@@ -319,6 +307,7 @@ void femCouetteAssemble(femCouetteProblem *theProblem)
       }
     }
   }
+
   int *elem = theGrains->elem;
   double xx[2];
   double iso[2];
@@ -391,37 +380,32 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
     double rOut        = myGrains->radiusOut;
     
     double zeta = 0.0;
- 
-//
-//  A FAIRE.... :-)    Difficile, difficile :-)
-//
-    int i,j;
-    int iContact = 0;
+
+    int i,j,iContact = 0;
 
     /* Reinitialisation des corrections de vitesse */
-    //if(iter==0)
     double dv;
 
 
     /* Correction de vitesse */
+
+    /* Calcul d une correction de vitesse pour tenir compte des collisions entre les grains */
     for(i=0;i<n-1;++i){
         for(j=i+1;j<n;++j){
-            /* Calcul d�une correction de vitesse pour tenir compte des collisions entre les grains */
-            double nx=x[j]-x[i];
-            double ny=y[j]-y[i];
-            double nn=sqrt(nx*nx+ny*ny);
-            nx=nx/nn;
-            ny=ny/nn;     
+            double nx = x[j]-x[i];
+            double ny = y[j]-y[i];
+            double nn = sqrt(nx*nx+ny*ny);
+            nx = nx/nn;
+            ny = ny/nn;     
             if(iter==0){
                 dv = dvContacts[iContact];
             }
             else{       
-            double gamma=nn-r[i]-r[j];
-            double vn=(vx[i]*nx+vy[i]*ny)-(vx[j]*nx+vy[j]*ny);
-            dv=fmax(0,vn+dvContacts[iContact]-gamma/dt)-dvContacts[iContact];
+            double gamma          = nn-r[i]-r[j];
+            double vn             =(vx[i]*nx+vy[i]*ny)-(vx[j]*nx+vy[j]*ny);
+            dv                    =fmax(0,vn+dvContacts[iContact]-gamma/dt)-dvContacts[iContact];
             dvContacts[iContact] += dv;
-
-        }
+            }
 
             vx[i] += -dv*nx*m[j]/(m[i]+m[j]);
             vy[i] += -dv*ny*m[j]/(m[i]+m[j]);
@@ -432,11 +416,9 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
 
             iContact++;
         }
-
-        /* Calcul d�une correction de vitesse pour tenir compte des collisions avec la frontiere */
-        
     }
     
+    /* Calcul d une correction de vitesse pour tenir compte des collisions avec la frontiere */
     for(i=0;i<n;i++){
 
         double norm = sqrt((x[i]*x[i])+(y[i]*y[i]));
@@ -445,15 +427,14 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
         if(iter==0){
             dv = dvBoundary[i];
         }
-        else{
-
-        double vn=(vx[i]*nx+vy[i]*ny);
-        double gammaOut=rOut-norm-r[i];
-        double gammaIn=norm-rIn-r[i];
-        double dv1=fmax(0,vn+dvBoundary[i]-gammaOut/dt);
-        double dv2=fmax(0,-vn-dvBoundary[i]-gammaIn/dt);
-        dv = dv1 - dv2-dvBoundary[i];
-        dvBoundary[i] += dv;
+        else {
+        double vn         = (vx[i]*nx+vy[i]*ny);
+        double gammaOut   = rOut-norm-r[i];
+        double gammaIn    = norm-rIn-r[i];
+        double dv1        = fmax(0,vn+dvBoundary[i]-gammaOut/dt);
+        double dv2        = fmax(0,-vn-dvBoundary[i]-gammaIn/dt);
+        dv                = dv1 - dv2-dvBoundary[i];
+        dvBoundary[i]    += dv;
         }
 
         vx[i] += -dv*nx;
@@ -462,7 +443,6 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
         zeta=fmax(zeta,fabs(dv));
 
     }
-
     return zeta;
 }
 
@@ -474,10 +454,10 @@ void reinitialiseMatrice(femCouetteProblem *theProblem){
   int i,j;
   for(i=0;i<theProblem->mesh->nNode;i++){
     for(j=0;j<theProblem->mesh->nNode;j++){
-      theProblem->system->A[i][j] = 0;
-      theProblem->system2->A[i][j] = 0;
+      theProblem->system->A[i][j]   = 0;
+      theProblem->system2->A[i][j]  = 0;
     }
-    theProblem->system->B[i] = 0;
+    theProblem->system->B[i]  = 0;
     theProblem->system2->B[i] = 0;
   }
 }
@@ -492,13 +472,13 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
     femGrains *myGrains = theProblem->grains;
     reinitialiseMatrice(theProblem);
     femCouetteAssemble(theProblem);
-    double* B = theProblem->system->B;
-    double* B2 = theProblem->system2->B;
+    double* B   = theProblem->system->B;
+    double* B2  = theProblem->system2->B;
 
     int i;    
-    int n = myGrains->n;
-    double radiusOut = myGrains->radiusOut;
-    double radiusIn = myGrains->radiusIn;
+    int n             = myGrains->n;
+    double radiusOut  = myGrains->radiusOut;
+    double radiusIn   = myGrains->radiusIn;
     
     double *x          = myGrains->x;
     double *y          = myGrains->y;
@@ -510,13 +490,12 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
     double gy          = myGrains->gravity[1];
 
 // 
-// -1- Calcul des nouvelles vitesses des grains sur base de la gravit� et de la trainee
+// -1- Calcul des nouvelles vitesses des grains sur base de la gravite et de la trainee
 //
     findElement(theProblem);
-    int elem,map[3];
-    double xloc[3],yloc[3];
-    double vx_loc;
-    double vy_loc;
+    int elem, map[3];
+    double xloc[3], yloc[3];
+    double vx_loc, vy_loc;
     double iso[2];
     double phi[3];
 
@@ -525,7 +504,7 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
       if(elem == -1){
         vx_loc = 0.0; vy_loc = 0.0;
       }
-      else{
+      else {
         femMeshLocal(theProblem->mesh, elem, map, xloc, yloc);
         isomorphisme(myGrains->x[i], myGrains->y[i], xloc, yloc, iso);
         vx_loc = 0;
@@ -537,11 +516,11 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
         vx_loc = phi1 * B[map[0]]  + phi2 * B[map[1]]  + phi3 * B[map[2]];
         vy_loc = phi1 * B2[map[0]] + phi2 * B2[map[1]] + phi3 * B2[map[2]];
       }
-      //printf("Vitesses : %f \n", B[myGrains->elem[i]]);
-        double fx = m[i] * gx - gamma * vx[i] + gamma * vx_loc;
-        double fy = m[i] * gy - gamma * vy[i] + gamma * vy_loc;
-        vx[i] += fx * dt / m[i];
-        vy[i] += fy * dt / m[i];  
+
+      double fx   = m[i] * gx - gamma * vx[i] + gamma * vx_loc;
+      double fy   = m[i] * gy - gamma * vy[i] + gamma * vy_loc;
+      vx[i]      += fx * dt / m[i];
+      vy[i]      += fy * dt / m[i];  
     }
 
 //

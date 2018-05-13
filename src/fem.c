@@ -403,7 +403,7 @@ void  femFullSystemConstrain(femFullSystem *mySystem,
 
 femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, double radiusOut)
 {
-    int i,nContact = n*(n-1)/2;
+    int i, nContact = n*(n-1)/2;
     
     femGrains *theGrains = malloc(sizeof(femGrains));
     theGrains->n = n;
@@ -414,30 +414,32 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
     theGrains->gamma = 1.0;
     
        
-    theGrains->x  = malloc(n*sizeof(double));
-    theGrains->y  = malloc(n*sizeof(double));
-    theGrains->vx = malloc(n*sizeof(double));
-    theGrains->vy = malloc(n*sizeof(double));
-    theGrains->r  = malloc(n*sizeof(double));
-    theGrains->m  = malloc(n*sizeof(double));
-    theGrains->elem = malloc(n*sizeof(int));    
-    theGrains->dvBoundary = malloc(n * sizeof(double));
-    theGrains->dvContacts = malloc(nContact * sizeof(double));
+    theGrains->x            = malloc(n*sizeof(double));
+    theGrains->y            = malloc(n*sizeof(double));
+    theGrains->vx           = malloc(n*sizeof(double));
+    theGrains->vy           = malloc(n*sizeof(double));
+    theGrains->r            = malloc(n*sizeof(double));
+    theGrains->m            = malloc(n*sizeof(double));
+    theGrains->elem         = malloc(n*sizeof(int));
+    theGrains->nCollisions  = malloc(n*sizeof(int));
+    theGrains->dvBoundary   = malloc(n * sizeof(double));
+    theGrains->dvContacts   = malloc(nContact * sizeof(double));
    
     for(i = 0; i < n; i++) {
-        theGrains->r[i] = r;
-        theGrains->m[i] = m;
-        theGrains->x[i] = (i%5) * r * 2.5 - 5 * r + 1e-8; 
-        theGrains->y[i] = (i/5) * r * 2.5 + 2 * r + radiusIn;
-        theGrains->vx[i] = 0.0;
-        theGrains->vy[i] = 0.0; 
-        theGrains->elem[i] = 0.0;
-        theGrains->dvBoundary[i] = 0.0; }
+        theGrains->r[i]             = r;
+        theGrains->m[i]             = m;
+        theGrains->x[i]             = (i%5) * r * 2.5 - 5 * r + 1e-8; 
+        theGrains->y[i]             = (i/5) * r * 2.5 + 2 * r + radiusIn;
+        theGrains->vx[i]            = 0.0;
+        theGrains->vy[i]            = 0.0; 
+        theGrains->elem[i]          = 0.0;
+        theGrains->nCollisions[i]   = 0.0;
+        theGrains->dvBoundary[i]    = 0.0;
+    }
  
     for(i = 0; i < nContact; i++)  
         theGrains->dvContacts[i] = 0.0;
 
-  
     return theGrains;
 }
 

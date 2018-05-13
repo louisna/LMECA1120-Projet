@@ -27,7 +27,7 @@ void        glfemDrawCircle(double x, double y,double r);
 void        glfemDrawDisk(double x, double y, double r);
 
 void 		glfemReshapeWindows(femMesh *theMesh, int width, int heigh);
-void 		glfemPlotField(femMesh *theMesh, double *u);
+void 		glfemPlotField(femMesh *theMesh, double *u, int boolMesh);
 void 		glfemPlotMesh(femMesh *theMesh);
 void 		glfemPlotEdges(femEdges *theEdges);
 void 		glfemPlotBnd(femEdges *theEdges);

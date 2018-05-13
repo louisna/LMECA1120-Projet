@@ -309,7 +309,7 @@ void glfemReshapeWindows(femMesh *theMesh, int w, int h)
     glLoadIdentity();
 }
 
-void glfemPlotField(femMesh *theMesh, double *u)
+void glfemPlotField(femMesh *theMesh, double *u, int boolMesh)
 {
     int i,j,*nodes;
     float  xLoc[4];
@@ -327,7 +327,10 @@ void glfemPlotField(femMesh *theMesh, double *u)
             uLoc[j] = glScale(uMin,uMax,u[nodes[j]]); }              
         glfemDrawColorElement(xLoc,yLoc,uLoc,nLocalNode); }
     glColor3f(0.0, 0.0, 0.0);
-    glfemPlotMesh(theMesh);
+    if (boolMesh==1)
+    {
+        glfemPlotMesh(theMesh);
+    }
 }
 
 void glfemPlotMesh(femMesh *theMesh)
@@ -385,5 +388,3 @@ void glfemPlotBnd(femEdges *theEdges)
             glVertex2d(theMesh->X[theEdges->edges[i].node[1]], theMesh->Y[theEdges->edges[i].node[1]]); }}
     glEnd();
 }
-
-
