@@ -16,7 +16,9 @@ static const double _gaussTri3Xsi[3]     = { 0.166666666666667, 0.66666666666666
 static const double _gaussTri3Eta[3]     = { 0.166666666666667, 0.166666666666667, 0.666666666666667};
 static const double _gaussTri3Weight[3]  = { 0.166666666666667, 0.166666666666667, 0.166666666666667};
 
-
+/**
+    * Integration *
+                    **/
 femIntegration *femIntegrationCreate(int n, femElementType type)
 {
     femIntegration *theRule = malloc(sizeof(femIntegration));
@@ -39,50 +41,21 @@ void femIntegrationFree(femIntegration *theRule)
     free(theRule);
 }
 
-void _q1c0_x(double *xsi, double *eta) 
-{
-    xsi[0] =  1.0;  eta[0] =  1.0;
-    xsi[1] = -1.0;  eta[1] =  1.0;
-    xsi[2] = -1.0;  eta[2] = -1.0;
-    xsi[3] =  1.0;  eta[3] = -1.0;
-}
-
-void _q1c0_phi(double xsi, double eta, double *phi)
-{
-    phi[0] = (1.0 + xsi) * (1.0 + eta) / 4.0;  
-    phi[1] = (1.0 - xsi) * (1.0 + eta) / 4.0;
-    phi[2] = (1.0 - xsi) * (1.0 - eta) / 4.0;
-    phi[3] = (1.0 + xsi) * (1.0 - eta) / 4.0;
-}
-
-void _q1c0_dphidx(double xsi, double eta, double *dphidxsi, double *dphideta)
-{
-    dphidxsi[0] =   (1.0 + eta) / 4.0;  
-    dphidxsi[1] = - (1.0 + eta) / 4.0;
-    dphidxsi[2] = - (1.0 - eta) / 4.0;
-    dphidxsi[3] =   (1.0 - eta) / 4.0;
-    dphideta[0] =   (1.0 + xsi) / 4.0;  
-    dphideta[1] =   (1.0 - xsi) / 4.0;
-    dphideta[2] = - (1.0 - xsi) / 4.0;
-    dphideta[3] = - (1.0 + xsi) / 4.0;
-
-}
-
-void _p1c0_x(double *xsi, double *eta) 
+void _x(double *xsi, double *eta) 
 {
     xsi[0] =  0.0;  eta[0] =  0.0;
     xsi[1] =  1.0;  eta[1] =  0.0;
     xsi[2] =  0.0;  eta[2] =  1.0;
 }
 
-void _p1c0_phi(double xsi, double eta, double *phi)
+void _phi(double xsi, double eta, double *phi)
 {
     phi[0] = 1 - xsi - eta;  
     phi[1] = xsi;
     phi[2] = eta;
 }
 
-void _p1c0_dphidx(double xsi, double eta, double *dphidxsi, double *dphideta)
+void _dphidx(double xsi, double eta, double *dphidxsi, double *dphideta)
 {
     dphidxsi[0] = -1.0;  
     dphidxsi[1] =  1.0;
@@ -97,16 +70,11 @@ void _p1c0_dphidx(double xsi, double eta, double *dphidxsi, double *dphideta)
 femDiscrete *femDiscreteCreate(int n, femElementType type)
 {
     femDiscrete *theSpace = malloc(sizeof(femDiscrete));
-    if (type == FEM_QUAD && n == 4) {
-        theSpace->n       = 4;
-        theSpace->x2      = _q1c0_x;
-        theSpace->phi2    = _q1c0_phi;
-        theSpace->dphi2dx = _q1c0_dphidx; }
-    else if (type == FEM_TRIANGLE && n == 3) {
+    if (type == FEM_TRIANGLE && n == 3) {
         theSpace->n       = 3;
-        theSpace->x2      = _p1c0_x;
-        theSpace->phi2    = _p1c0_phi;
-        theSpace->dphi2dx = _p1c0_dphidx; }
+        theSpace->x2      = _x;
+        theSpace->phi2    = _phi;
+        theSpace->dphi2dx = _dphidx; }
     else Error("Cannot create such a discrete space !");
     return theSpace; 
 }
@@ -482,7 +450,7 @@ femIterativeSolver *femIterativeSolverCreate(int size)
     solver->X = solver->R + size*3;       
     solver->size = size;
     solver->iter = 0;
-    solver->error = 10.0e+12;
+    solver->error = 10.0e+6;
     for (int i=0 ; i < solver->size*4 ; i++) 
         solver->R[i] = 0; 
     return solver;
@@ -498,7 +466,7 @@ void femIterativeSolverInit(femIterativeSolver *mySolver)
 {
     int i;
     mySolver->iter = 0;
-    mySolver->error = 10.0e+12;
+    mySolver->error = 10.0e+6;
     for (i=0 ; i < mySolver->size*4 ; i++) 
         mySolver->R[i] = 0;        
 }

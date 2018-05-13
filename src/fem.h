@@ -77,15 +77,6 @@ typedef struct
 } femIterativeSolver;
 
 typedef struct {
-    femMesh *mesh;
-    femEdges *edges;
-    femDiscrete *space;
-    femIntegration *rule;
-    femFullSystem *system;
-    femFullSystem *system2;
-} femPoissonProblem;
-
-typedef struct {
     int n;
     double radiusIn;
     double radiusOut;
@@ -101,6 +92,19 @@ typedef struct {
     double *dvContacts;
     int *elem; 
 } femGrains;
+
+typedef struct {
+    femMesh *mesh;
+    femEdges *edges;
+    femDiscrete *space;
+    femIntegration *rule;
+    femFullSystem *system;
+    femFullSystem *system2;
+    femGrains *grains;
+    double mu;
+} femCouetteProblem;
+
+void                _phi(double xsi, double eta, double* phi);
 
 
 femIntegration      *femIntegrationCreate(int n, femElementType type);
@@ -132,14 +136,14 @@ void                 femFullSystemAlloc(femFullSystem* mySystem, int size);
 double*              femFullSystemEliminate(femFullSystem* mySystem);
 void                 femFullSystemConstrain(femFullSystem* mySystem, int myNode, double value);
 
-femPoissonProblem   *femPoissonCreate(const char *filename);
-void                 femPoissonFree(femPoissonProblem *theProblem);
-void                 femPoissonSolve(femPoissonProblem *theProblem, femGrains *theGrains);
+femCouetteProblem   *femCouetteCreate(const char *filename, femGrains *theGrains);
+void                 femCouetteFree(femCouetteProblem *theProblem);
+void                 femCouetteSolve(femCouetteProblem *theProblem);
 
 femGrains  *femGrainsCreateSimple(int n, double r, double m, double radiusIn, double radiusOut);
 femGrains  *femGrainsCreateTiny(double radiusIn, double radiusOut);
 void        femGrainsFree(femGrains *myGrains);
-void        femGrainsUpdate(femPoissonProblem *theProblem,femGrains *myGrains, double dt, double tol, double iterMax);
+void        femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, double iterMax);
 double      femGrainsContactIterate(femGrains *myGrains, double dt, int iter);
 
 femIterativeSolver  *femIterativeSolverCreate(int size);

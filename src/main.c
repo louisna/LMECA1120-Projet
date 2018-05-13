@@ -13,31 +13,28 @@
 
 int main(void)
 {   
-    int    n = 45;
+    int    n         = 45;
     double radius    = 0.07;
-    double mass      = 0.052;
+    double mass      = 0.52;
     double radiusIn  = 0.4;
     double radiusOut = 2.0;    
-    double dt      = 1e-1;
-    double tEnd    = 60.0;
-    double tol     = 1e-6;
-    double t       = 0;
-    double iterMax = 100;
+    double dt        = 1e-1;
+    double tEnd      = 60.0;
+    double tol       = 1e-6;
+    double t         = 0;
+    double iterMax   = 100;
+
     femGrains* theGrains = femGrainsCreateSimple(n,radius,mass,radiusIn,radiusOut);
    
-    femPoissonProblem* theProblem = femPoissonCreate("../data/meshBig.txt");
+    femCouetteProblem* theProblem = femCouetteCreate("../data/meshMedium.txt", theGrains);
     double Bfin[theProblem->system->size];
     
-     
     printf("Number of elements    : %4d\n", theProblem->mesh->nElem);
     printf("Number of local nodes : %4d\n", theProblem->mesh->nLocalNode);
     printf("Number of segments    : %4d\n", theProblem->edges->nBoundary);
     printf("Number of unknowns    : %4d\n", theProblem->system->size);
 
-    
-    //femPoissonSolve(theProblem); 
-    //femFullSystemIterate(theProblem);
-    femPoissonSolve(theProblem,theGrains);
+    femCouetteAssemble(theProblem);
     int k;
     for(k=0;k<theGrains->n;k++){
         printf("Bille %d dans element %d\n", k, theGrains->elem[k]);
@@ -81,7 +78,7 @@ int main(void)
 
         if (t < tEnd && theRunningMode == 1) {
             printf("Time = %4g : ",t);  
-            femGrainsUpdate(theProblem,theGrains,dt,tol,iterMax);
+            femGrainsUpdate(theProblem,dt,tol,iterMax);
             t += dt; }
         while ( glfwGetTime()-currentTime < theVelocityFactor ) {
           if (glfwGetKey(window,'R') == GLFW_PRESS) 
@@ -94,7 +91,7 @@ int main(void)
            
                
     glfwTerminate(); 
-    femPoissonFree(theProblem);
+    femCouetteFree(theProblem);
     exit(EXIT_SUCCESS);
     
 }
