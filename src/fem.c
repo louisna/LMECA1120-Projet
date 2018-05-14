@@ -418,6 +418,7 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
     theGrains->y            = malloc(n*sizeof(double));
     theGrains->vx           = malloc(n*sizeof(double));
     theGrains->vy           = malloc(n*sizeof(double));
+    theGrains->norm         = malloc(n*sizeof(double));
     theGrains->r            = malloc(n*sizeof(double));
     theGrains->m            = malloc(n*sizeof(double));
     theGrains->elem         = malloc(n*sizeof(int));
@@ -504,12 +505,21 @@ void femGrainsFree(femGrains *theGrains)
     free(theGrains->y);
     free(theGrains->vx);
     free(theGrains->vy);
+    free(theGrains->norm);
     free(theGrains->r);
     free(theGrains->m);
     free(theGrains->elem);
     free(theGrains->dvBoundary);
     free(theGrains->dvContacts);
     free(theGrains);
+}
+
+void femNorm(double *x, double *y, double *norm, int n)
+{
+    for (int i = 0; i < n; ++i)
+    {
+        norm[i] = sqrt(x[i] * x[i] + y[i] * y[i]);
+    }
 }
 
 double femMin(double *x, int n) 

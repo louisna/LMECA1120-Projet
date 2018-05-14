@@ -485,6 +485,7 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
     double *m          = myGrains->m;
     double *vy         = myGrains->vy;
     double *vx         = myGrains->vx;
+    double *norm         = myGrains->norm;
     double gamma       = myGrains->gamma;
     double gx          = myGrains->gravity[0];
     double gy          = myGrains->gravity[1];
@@ -535,7 +536,7 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
         iter++; }
     while ((error > tol/dt && iter < iterMax) || iter == 1);
     printf("iterations = %4d : error = %14.7e \n",iter-1,error);
- 
+    femNorm(vx,vy,norm,n);
 //  
 // -3- Calcul des nouvelles positions sans penetrations de points entre eux
 //

@@ -85,6 +85,7 @@ typedef struct {
     double  *y;
     double  *vx;
     double  *vy;
+    double  *norm;
     double  *r;
     double  *m;
     double  *dvBoundary;
@@ -155,6 +156,7 @@ void                 femIterativeSolverPrint(femIterativeSolver *mySolver);
 void                 femIterativeSolverPrintInfos(femIterativeSolver *mySolver);
 int                  femIterativeSolverConverged(femIterativeSolver *mySolver);
 
+void                 femNorm(double *x, double *y, double *norm, int n);
 double               femMin(double *x, int n);
 double               femMax(double *x, int n);
 void                 femError(char *text, int line, char *file);
