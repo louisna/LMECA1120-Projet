@@ -38,7 +38,7 @@ int main(void)
 
     printf("    S           : Stop \n");
     printf("    R           : Restart \n");
-    printf("    O - P       : Acitve - Deactivate Mesh \n");
+    printf("    O - P       : Active - Deactivate Mesh \n");
     printf("    N - H - V   : Norm - Horizontal - Vertical Fluid Speed \n");
 
     femCouetteAssemble(theProblem);
@@ -48,7 +48,7 @@ int main(void)
     //}
 
     
-    GLFWwindow* window = glfemInit("MECA1120 : Projet EF ");
+    GLFWwindow* window = glfemInit("MECA1120 : Projet EF ",880,480);
     glfwMakeContextCurrent(window);
     int theRunningMode = 1.0;
     float theVelocityFactor = 0.1;
@@ -60,32 +60,57 @@ int main(void)
         double currentTime = glfwGetTime();
 
         glfwGetFramebufferSize(window,&w,&h);
-        glfemReshapeWindows(theProblem->mesh,w,h);
-        if (boolPlot == 0)
-            glfemPlotField(theProblem->mesh,theProblem->system->B,boolMesh);
-        else if (boolPlot < 0)
-            glfemPlotField(theProblem->mesh,theProblem->system2->B,boolMesh);
-        else 
-            glfemPlotField(theProblem->mesh,theProblem->norm,boolMesh);
-        glColor3f(0.0,0.0,0.0);
+        glfemReshapeWindows(theProblem->mesh,w-300,h);
 
+        int height=100,length=780;
+        if (boolPlot == 0)
+        {
+            glfemPlotField(theProblem->mesh,theProblem->system->B,boolMesh);
+            sprintf(theMessage,"Max V Grain = %.4f ", femMax(theGrains->vy,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,350,theMessage);
+            sprintf(theMessage,"Min V Grain = %.4f ", femMin(theGrains->vy,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,370,theMessage);
+        }
+        else if (boolPlot < 0)
+        {
+            glfemPlotField(theProblem->mesh,theProblem->system2->B,boolMesh);
+            sprintf(theMessage,"Max V Grain = %.4f ", femMax(theGrains->vx,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,350,theMessage);
+            sprintf(theMessage,"Min V Grain = %.4f ", femMin(theGrains->vx,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,370,theMessage);
+        }
+        else 
+        {
+            glfemPlotField(theProblem->mesh,theProblem->norm,boolMesh);
+            sprintf(theMessage,"Max V Grain = %.4f ", femMax(theGrains->norm,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,350,theMessage);
+            sprintf(theMessage,"Min V Grain = %.4f ", femMin(theGrains->norm,n));
+            glColor3f(1,0,0); glfemDrawMessage(length,370,theMessage);
+            glColor3f(0.0,0.0,0.0);
+        }
         for (i=0 ;i < theGrains->n; i++) {
             double v = theGrains->norm[i];
             glColor3f(v/femMax(theGrains->norm,n),0,0); 
             glfemDrawDisk(theGrains->x[i],theGrains->y[i],theGrains->r[i]); 
         }
         glColor3f(0,0,0); glfemDrawCircle(0,0,radiusOut);
-        glColor3f(0,0,0); glfemDrawCircle(0,0,radiusIn); 
+        glColor3f(0,0,0); glfemDrawCircle(0,0,radiusIn);
 
         sprintf(theMessage, "Max V Fluid : %.4f", femMax(theProblem->system->B,theProblem->system->size));
-        glColor3f(1,0,0); glfemDrawMessage(270,460,theMessage);
+        glColor3f(1,0,0); glfemDrawMessage(length,400,theMessage);
         sprintf(theMessage,"Time = %g sec",t);
         glColor3f(1,0,0); glfemDrawMessage(20,460,theMessage);
-        sprintf(theMessage,"Max V Grain = %.4f ", femMax(theGrains->norm,n));
-        glColor3f(1,0,0); glfemDrawMessage(270,15,theMessage);
-        sprintf(theMessage,"Min V Grain = %.4f ", femMin(theGrains->norm,n));
-        glColor3f(1,0,0); glfemDrawMessage(270,30,theMessage);
 
+        sprintf(theMessage,"S - R   = %s - %s ", "Stop","Restart");
+        glColor3f(1,0,0); glfemDrawMessage(length,height,theMessage);
+        sprintf(theMessage,"O - P   = %s - %s Mesh ", "Active","Desactive");
+        glColor3f(1,0,0); glfemDrawMessage(length,height+20,theMessage);
+        sprintf(theMessage,"N       = %s Fluid Speed", "Normal");
+        glColor3f(1,0,0); glfemDrawMessage(length,height+40,theMessage);
+        sprintf(theMessage,"H       = %s Fluid Speed", "Horizontal");
+        glColor3f(1,0,0); glfemDrawMessage(length,height+60,theMessage);
+        sprintf(theMessage,"V       = %s Fluid Speed", "Vertical");
+        glColor3f(1,0,0); glfemDrawMessage(length,height+80,theMessage);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

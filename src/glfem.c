@@ -354,12 +354,12 @@ void glfemMessage(char *message)
     glfemDrawMessage(20,460,message);   
 }
 
-GLFWwindow* glfemInit(char *theWindowName)
+GLFWwindow* glfemInit(char *theWindowName, int width, int length)
 {
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(480,480,"Simple example with graphics",NULL,NULL);    
+    GLFWwindow* window = glfwCreateWindow(width,length,"Simple example with graphics",NULL,NULL);    
     glfwMakeContextCurrent(window);
-    glfemSetRasterSize(480,480);
+    glfemSetRasterSize(width,length);
     glfwSetWindowTitle(window,theWindowName);
     glShadeModel(GL_SMOOTH);
     glMakeRasterFont();

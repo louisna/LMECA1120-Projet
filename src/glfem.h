@@ -35,6 +35,6 @@ void 		glfemPlotBnd(femEdges *theEdges);
 void 		glfemMessage(char *message);
 void 		glfemDrawMessage(int h, int v, char *message);
 void 		glfemSetRasterSize(int width, int height);
-GLFWwindow* glfemInit(char *windowName);
+GLFWwindow* glfemInit(char *windowName, int width, int length);
 
 #endif
