@@ -6,7 +6,6 @@ Nahi NASSAR : 1269-16-00
 
 Projet FEM 2018
 */
-#define VEXT 7.0
 
 
 # ifndef NOCOUETTECREATE
@@ -251,6 +250,7 @@ void femCouetteAssemble(femCouetteProblem *theProblem)
   double gamma              = theGrains->gamma;
   double radiusOut          = theGrains->radiusOut;
   double mu                 = theProblem->mu;
+  double VEXT               = theProblem->VEXT;
 
   double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
   int i,j,k,l;

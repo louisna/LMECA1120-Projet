@@ -104,6 +104,7 @@ typedef struct {
     femGrains       *grains;
     double          *norm;
     double           mu;
+    double VEXT;
 } femCouetteProblem;
 
 

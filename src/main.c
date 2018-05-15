@@ -25,10 +25,12 @@ int main(void)
     double tol       = 1e-6;
     double t         = 0;
     double iterMax   = 100;
+    double VEXT      = 4.0;
 
     femGrains* theGrains = femGrainsCreateSimple(n,radius,mass,radiusIn,radiusOut);
    
     femCouetteProblem* theProblem = femCouetteCreate("../data/meshMedium.txt", theGrains);
+    theProblem->VEXT = VEXT;
     double Bfin[theProblem->system->size];
     
     printf("Number of elements    : %4d\n", theProblem->mesh->nElem);
@@ -40,6 +42,7 @@ int main(void)
     printf("    R           : Restart \n");
     printf("    O - P       : Active - Deactivate Mesh \n");
     printf("    N - H - V   : Norm - Horizontal - Vertical Fluid Speed \n");
+    printf("    U - D       : Speed up/down the external circle\n");
 
     femCouetteAssemble(theProblem);
     int k;
@@ -111,6 +114,13 @@ int main(void)
         glColor3f(1,0,0); glfemDrawMessage(length,height+60,theMessage);
         sprintf(theMessage,"V       = %s Fluid Speed", "Vertical");
         glColor3f(1,0,0); glfemDrawMessage(length,height+80,theMessage);
+        sprintf(theMessage,"U - D   = %s - %s", "Speed up", "Speed down");
+        glColor3f(1,0,0); glfemDrawMessage(length, height+100, theMessage);
+        sprintf(theMessage,"Z       = %s", "Set speed to 0.0");
+        glColor3f(1,0,0); glfemDrawMessage(length, height+120, theMessage);
+        sprintf(theMessage,"Actual speed: %f", theProblem->VEXT);
+        glColor3f(1,0,0); glfemDrawMessage(length, height+140, theMessage);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -135,6 +145,20 @@ int main(void)
             boolPlot = 0;
         if (glfwGetKey(window,'N') == GLFW_PRESS)
             boolPlot = 1;
+        if (glfwGetKey(window,'W') == GLFW_PRESS)
+            theProblem->VEXT = 0.0;
+        if (glfwGetKey(window,'U') == GLFW_PRESS){
+            if (theProblem->VEXT >= 10)
+                printf("Miximal authorized speed reached\n");
+            else
+                theProblem->VEXT += 0.4;
+        }
+        if (glfwGetKey(window,'D') == GLFW_PRESS){
+            if (theProblem->VEXT <= -10)
+                printf("Minimal authorized speed reached\n");
+            else
+                theProblem->VEXT -= 0.4;
+        }
 
     } while( glfwGetKey(window,GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(window) != 1);
