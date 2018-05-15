@@ -2,6 +2,10 @@
  *  fem.c
  *  Library for MECA1120 : Finite Elements for dummies
  *
+ *  Projet EF
+ *  Louis NAVARRE : 1235 16 00
+ *  Nahi Michel NASSAR : 1269 16 00
+ *
  *  Copyright (C) 2013 UCL-IMMC : Vincent Legat
  *  All rights reserved.
  *
@@ -16,9 +20,6 @@ static const double _gaussTri3Xsi[3]     = { 0.166666666666667, 0.66666666666666
 static const double _gaussTri3Eta[3]     = { 0.166666666666667, 0.166666666666667, 0.666666666666667};
 static const double _gaussTri3Weight[3]  = { 0.166666666666667, 0.166666666666667, 0.166666666666667};
 
-/**
-    * Integration *
-                    **/
 femIntegration *femIntegrationCreate(int n, femElementType type)
 {
     femIntegration *theRule = malloc(sizeof(femIntegration));
@@ -190,8 +191,9 @@ void femMeshClean(femMesh *theMesh)
     
     for (i = 0; i < theMesh->nElem; ++i) {
         elem = &(theMesh->elem[i*theMesh->nLocalNode]);
-        for (j = 0; j < theMesh->nLocalNode; ++j) {
-        	elem[j] = map[elem[j]]; }}
+        for (j = 0; j < theMesh->nLocalNode; ++j)
+        	elem[j] = map[elem[j]];
+    }
             
     free(check);
     free(map);
@@ -203,10 +205,6 @@ void femMeshWrite(const femMesh *theMesh, const char *filename)
     int i,*elem;
     
     FILE* file = fopen(filename,"w");
-    
-        
-    
-    
     
     fprintf(file, "Number of nodes %d \n", theMesh->nNode);
     for (i = 0; i < theMesh->nNode; ++i) {
@@ -244,7 +242,9 @@ femEdges *femEdgesCreate(femMesh *theMesh)
             edges[id].elem[0] = i;
             edges[id].elem[1] = -1;
             edges[id].node[0] = elem[j];
-            edges[id].node[1] = elem[(j + 1) % nLoc]; }}
+            edges[id].node[1] = elem[(j + 1) % nLoc]; 
+        }
+    }
 
     qsort(theEdges->edges, theEdges->nEdge, sizeof(femEdge), femEdgesCompare);
 
@@ -252,13 +252,17 @@ femEdges *femEdgesCreate(femMesh *theMesh)
     int nBoundary = 0;
     
     for (i=0; i < theEdges->nEdge; i++) {
-      if (i == theEdges->nEdge - 1 || femEdgesCompare(&edges[i],&edges[i+1]) != 0) {
+        if (i == theEdges->nEdge - 1 || femEdgesCompare(&edges[i],&edges[i+1]) != 0) {
               edges[index] = edges[i];
-              nBoundary++; }
-      else {  edges[index] = edges[i];
-              edges[index].elem[1] = edges[i+1].elem[0];
-              i = i+1;}
-      index++; }
+              nBoundary++;
+        }
+        else {  
+            edges[index] = edges[i];
+            edges[index].elem[1] = edges[i+1].elem[0];
+            i = i+1;
+        }
+      index++; 
+    }
       
     theEdges->edges = realloc(edges, index * sizeof(femEdge));
     theEdges->nEdge = index;
@@ -272,7 +276,8 @@ void femEdgesPrint(femEdges *theEdges)
     for (i = 0; i < theEdges->nEdge; ++i) {
         printf("%6d : %4d %4d : %4d %4d \n",i,
                theEdges->edges[i].node[0],theEdges->edges[i].node[1],
-               theEdges->edges[i].elem[0],theEdges->edges[i].elem[1]); }
+               theEdges->edges[i].elem[0],theEdges->edges[i].elem[1]);
+    }
 }
 
 void femEdgesFree(femEdges *theEdges)
@@ -422,7 +427,6 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
     theGrains->r            = malloc(n*sizeof(double));
     theGrains->m            = malloc(n*sizeof(double));
     theGrains->elem         = malloc(n*sizeof(int));
-    theGrains->nCollisions  = malloc(n*sizeof(int));
     theGrains->dvBoundary   = malloc(n * sizeof(double));
     theGrains->dvContacts   = malloc(nContact * sizeof(double));
    
@@ -434,7 +438,6 @@ femGrains *femGrainsCreateSimple(int n, double r, double m, double radiusIn, dou
         theGrains->vx[i]            = 0.0;
         theGrains->vy[i]            = 0.0; 
         theGrains->elem[i]          = 0.0;
-        theGrains->nCollisions[i]   = 0.0;
         theGrains->dvBoundary[i]    = 0.0;
     }
  

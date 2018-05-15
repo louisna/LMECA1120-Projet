@@ -2,7 +2,9 @@
  *  fem.h
  *  Library for MECA1120 : Finite Elements for dummies
  *
- *  Copyright (C) 2018 UCL-IMMC : Vincent Legat
+ *  Projet EF
+ *  Louis NAVARRE : 1235 16 00
+ *  Nahi NASSAR : 169 16 00
  *  All rights reserved.
  *
  */
@@ -90,8 +92,7 @@ typedef struct {
     double  *m;
     double  *dvBoundary;
     double  *dvContacts;
-    int     *elem; 
-    int     *nCollisions;
+    int     *elem;
 } femGrains;
 
 typedef struct {
@@ -104,7 +105,7 @@ typedef struct {
     femGrains       *grains;
     double          *norm;
     double           mu;
-    double VEXT;
+    double           VEXT;
 } femCouetteProblem;
 
 

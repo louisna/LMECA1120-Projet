@@ -1,8 +1,11 @@
 /*
- *  main.c
+ *  fem.c
  *  Library for MECA1120 : Finite Elements for dummies
  *
- *  Copyright (C) 2018 UCL-EPL : Vincent Legat
+ *  Projet EF
+ *  Louis NAVARRE : 1235 16 00
+ *  Nahi Michel NASSAR : 1269 16 00
+ *
  *  All rights reserved.
  *
  */
@@ -13,9 +16,7 @@
 
 int main(void)
 {   
-    //int    n         = 200;
     int    n         = 20;
-    //double radius    = 0.02;
     double radius    = 0.1;
     double mass      = 0.52;
     double radiusIn  = 0.4;
@@ -24,37 +25,25 @@ int main(void)
     double tEnd      = 60.0;
     double tol       = 1e-6;
     double t         = 0;
-    double iterMax   = 100;
+    double iterMax   = 1000;
     double VEXT      = 4.0;
 
     femGrains* theGrains = femGrainsCreateSimple(n,radius,mass,radiusIn,radiusOut);
    
     femCouetteProblem* theProblem = femCouetteCreate("../data/meshMedium.txt", theGrains);
     theProblem->VEXT = VEXT;
-    double Bfin[theProblem->system->size];
     
     printf("Number of elements    : %4d\n", theProblem->mesh->nElem);
     printf("Number of local nodes : %4d\n", theProblem->mesh->nLocalNode);
     printf("Number of segments    : %4d\n", theProblem->edges->nBoundary);
     printf("Number of unknowns    : %4d\n\n", theProblem->system->size);
 
-    printf("    S           : Stop \n");
-    printf("    R           : Restart \n");
-    printf("    O - P       : Active - Deactivate Mesh \n");
-    printf("    N - H - V   : Norm - Horizontal - Vertical Fluid Speed \n");
-    printf("    U - D       : Speed up/down the external circle\n");
-
     femCouetteAssemble(theProblem);
-    int k;
-    //for(k=0;k<theGrains->n;k++){
-    //    printf("Bille %d dans element %d\n", k, theGrains->elem[k]);
-    //}
-
     
     GLFWwindow* window = glfemInit("MECA1120 : Projet EF ",880,480);
     glfwMakeContextCurrent(window);
     int theRunningMode = 1.0;
-    float theVelocityFactor = 0.1;
+    float theVelocityFactor = 0.00001;
     char theMessage[256];
     int boolMesh = 1, boolPlot = 1;
 
@@ -91,11 +80,13 @@ int main(void)
             glColor3f(1,0,0); glfemDrawMessage(length,370,theMessage);
             glColor3f(0.0,0.0,0.0);
         }
+
         for (i=0 ;i < theGrains->n; i++) {
             double v = theGrains->norm[i];
             glColor3f(v/femMax(theGrains->norm,n),0,0); 
             glfemDrawDisk(theGrains->x[i],theGrains->y[i],theGrains->r[i]); 
         }
+
         glColor3f(0,0,0); glfemDrawCircle(0,0,radiusOut);
         glColor3f(0,0,0); glfemDrawCircle(0,0,radiusIn);
 
@@ -169,4 +160,3 @@ int main(void)
     exit(EXIT_SUCCESS);
     
 }
-
