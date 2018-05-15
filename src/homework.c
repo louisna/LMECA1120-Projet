@@ -12,8 +12,6 @@
 
 #include"fem.h"
 
-# ifndef NOCOUETTECREATE
-
 femCouetteProblem *femCouetteCreate(const char *filename, femGrains *grains)
 {
     femCouetteProblem *theProblem = malloc(sizeof(femCouetteProblem));
@@ -29,9 +27,6 @@ femCouetteProblem *femCouetteCreate(const char *filename, femGrains *grains)
     return theProblem;
 }
 
-# endif
-# ifndef NOCOUETTEFREE
-
 void femCouetteFree(femCouetteProblem *theProblem)
 {
     femFullSystemFree(theProblem->system);
@@ -44,11 +39,6 @@ void femCouetteFree(femCouetteProblem *theProblem)
     free(theProblem->norm);
     free(theProblem);
 }
-    
-
-# endif
-# ifndef NOMESHLOCAL
-
 
 void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, double *y)
 {
@@ -62,8 +52,6 @@ void femMeshLocal(const femMesh *theMesh, const int i, int *map, double *x, doub
     y[j]   = theMesh->Y[map[j]];
   }
 }
-
-# endif
 
 void femIterativeSolverAssemble(femIterativeSolver* mySolver, femFullSystem *theSystem)
 {
@@ -141,8 +129,6 @@ double *femIterativeSolverEliminate(femIterativeSolver *mySolver)
     return mySolver->X;
 }
 
-# ifndef FEMCOUETTE
-
 void femCouetteSolve(femCouetteProblem *theProblem){
     femIterativeSolver *theSolver  = femIterativeSolverCreate(theProblem->system->size);
     femIterativeSolver *theSolver2 = femIterativeSolverCreate(theProblem->system2->size);
@@ -176,8 +162,6 @@ void femCouetteSolve(femCouetteProblem *theProblem){
     free(theSolver2);
 }
 
-#endif
-
 void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_return){
     double x_iso, y_iso;
 
@@ -187,8 +171,6 @@ void isomorphisme(double x, double y, double *x_loc, double *y_loc, double *to_r
     to_return[0] = x_iso;
     to_return[1] = y_iso;
 }
-
-# ifndef FINDELEMENT
 
 void findElement(femCouetteProblem *theProblem){
     femGrains *theGrains = theProblem->grains;
@@ -227,11 +209,6 @@ void findElement(femCouetteProblem *theProblem){
     }
 
 }
-
-# endif
-
-# ifndef NOPOISSONASSEMBLE
-
 
 void femCouetteAssemble(femCouetteProblem *theProblem)
 {
@@ -359,10 +336,6 @@ void femCouetteAssemble(femCouetteProblem *theProblem)
     femCouetteSolve(theProblem);
 }
 
-# endif
-
-# ifndef NOCONTACTITERATE
-
 double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)  
 {
     int n = myGrains->n; 
@@ -443,10 +416,6 @@ double femGrainsContactIterate(femGrains *myGrains, double dt, int iter)
     return zeta;
 }
 
-# endif
-
-# ifndef REINITI
-
 void reinitialiseMatrice(femCouetteProblem *theProblem){
     int i,j;
     for(i=0;i<theProblem->mesh->nNode;i++){
@@ -458,11 +427,6 @@ void reinitialiseMatrice(femCouetteProblem *theProblem){
         theProblem->system2->B[i] = 0;
     }
 }
-
-#endif
-
-# ifndef NOUPDATE
-
 
 void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, double iterMax)
 {
@@ -543,5 +507,3 @@ void femGrainsUpdate(femCouetteProblem *theProblem, double dt, double tol, doubl
         x[i] += vx[i] * dt;
         y[i] += vy[i] * dt; }
 }
-
-# endif
